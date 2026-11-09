@@ -1,0 +1,31 @@
+%% Main system flow - Gemini Music Recommender
+%% Preview: https://mermaid.live or a Mermaid extension in VS Code.
+%% Must match the code. If a module changes, update this file.
+%% Testing is shown inside boxes A and 4, not as a separate block.
+flowchart TD
+    A(["User chats<br/>(a real person, or a fake persona<br/>when run_eval.py tests the system)"]):::human
+    B["1. Input check<br/>guardrails.py"]
+    C["2. Interview agent<br/>interview.py<br/>asks, extracts, repeats until confident"]
+    D[("Docs for RAG<br/>docs/*.md")]
+    E{{"Gemini<br/>llm.py"}}
+    F["3. User profile<br/>values + confidence"]
+    G[("Song catalog<br/>songs.csv")]
+    H["4. Recommender<br/>recommender.py<br/>scores songs, picks top 5<br/>(persona test: run_eval.py checks the top 5<br/>and prints PASS or FAIL)"]
+    I["5. Explain each song<br/>Gemini + docs, then fact check"]
+    J([User rates each song 1-10]):::human
+    K["6. Feedback<br/>feedback.py<br/>metrics + profile update"]
+
+    A --> B --> C
+    D -->|retrieved text| C
+    C <-->|questions and answers| E
+    C --> F
+    F --> H
+    G --> H
+    H --> I
+    D -->|retrieved text| I
+    I <--> E
+    I --> J
+    J --> K
+    K -->|"Regenerate (after all 5 rated)"| F
+
+    classDef human fill:#ffe9a8,stroke:#b58900,color:#000
