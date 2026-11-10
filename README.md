@@ -86,8 +86,8 @@ Every recommendation has a `listen:` link (a YouTube search for that song). Cons
 Everything below was pasted from real runs ([`logs/demo_session.txt`](logs/demo_session.txt)). The reason lines are shortened here; the real output lists every feature's points. The agent's step-by-step reasoning for the same session is in [`ai_interactions.md`](ai_interactions.md).
 
 Video sample
-<a href="GIF/Codepath_AI101_Demo.gif"> 
-<img src="assets/video_walkthrough_image.png" />title="Click me to see demo"></a>
+<a href="GIF/Codepath_AI101_Demo.gif" title="Click me to see demo"> 
+<img src="assets/video_walkthrough_image.png" /></a>
 
 ###
 
