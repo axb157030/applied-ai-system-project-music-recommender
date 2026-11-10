@@ -1,31 +1,32 @@
 %% Main system flow - Gemini Music Recommender
 %% Preview: https://mermaid.live or a Mermaid extension in VS Code.
 %% Must match the code. If a module changes, update this file.
-%% Testing is shown inside boxes A and 4, not as a separate block.
+%% Yellow = a human is involved. Gemini only writes and reads language; code does all scoring and number updates.
 flowchart TD
-    A(["User chats<br/>(a real person, or a fake persona<br/>when run_eval.py tests the system)"]):::human
-    B["1. Input check<br/>guardrails.py"]
-    C["2. Interview agent<br/>interview.py<br/>asks, extracts, repeats until confident"]
-    D[("Docs for RAG<br/>docs/*.md")]
+    A(["User<br/>console (main.py) or web (app.py)<br/>run_eval.py plays a fake user when testing"]):::human
+    B["1. Input check<br/>guardrails.py<br/>blocks injection, personal data, self-harm, long text"]
+    C["2. Interview agent<br/>interview.py<br/>asks, answers questions, extracts preferences"]
+    DOCS[("Knowledge docs<br/>docs/*.md")]
+    D["Retriever (RAG)<br/>retriever.py<br/>finds the most relevant doc text"]
     E{{"Gemini<br/>llm.py"}}
-    F["3. User profile<br/>values + confidence"]
+    V["Validate Gemini's output<br/>preferences.py<br/>only known fields and real catalog labels"]
+    F["3. User profile"]
     G[("Song catalog<br/>songs.csv")]
-    H["4. Recommender<br/>recommender.py<br/>scores songs, picks top 5<br/>(persona test: run_eval.py checks the top 5<br/>and prints PASS or FAIL)"]
-    I["5. Explain each song<br/>Gemini + docs, then fact check"]
-    J([User rates each song 1-10]):::human
-    K["6. Feedback<br/>feedback.py<br/>metrics + profile update"]
+    H["4. Recommender<br/>recommender.py<br/>scores every song, shows top 5 with reasons"]
+    J([5. User rates each song 1-10<br/>and may add a comment]):::human
+    K["6. Feedback<br/>feedback.py<br/>metrics, then profile update<br/>(run_eval.py checks the result: PASS or FAIL)"]
 
     A --> B --> C
+    DOCS --> D
     D -->|retrieved text| C
-    C <-->|questions and answers| E
-    C --> F
+    C <-->|questions, answers, extraction| E
+    E --> V
+    V --> F
     F --> H
     G --> H
-    H --> I
-    D -->|retrieved text| I
-    I <--> E
-    I --> J
+    H --> J
     J --> K
-    K -->|"Regenerate (after all 5 rated)"| F
+    K -->|"new profile + unseen songs<br/>(Regenerate after all 5 rated)"| H
+    K -.->|"comments only"| E
 
     classDef human fill:#ffe9a8,stroke:#b58900,color:#000

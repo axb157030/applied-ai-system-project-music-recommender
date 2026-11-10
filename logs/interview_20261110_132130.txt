@@ -1,0 +1,23 @@
+Initial profile: {}
+User: 'I like songs with a lot of energy. I do not know what exactly the mood is in words, but a song where it feels that there is more towards this world than probability like you are on a great journey. Please give me music like that'
+Reference for extraction: ['interview_playbook.md', 'attributes.md', 'moods_genres_and_tags.md', 'word-to-number tables', 'song catalog']
+Extracted: {'target_energy': 0.85, 'preferred_tags': ['epic', 'cinematic']}
+Profile now: {'target_energy': 0.85, 'preferred_tags': ['epic', 'cinematic']}
+Recommendations: Strobe (0.70); [Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover) (0.57); Uptown Funk (0.57); September (0.57); Levitating (0.56)
+Ratings: {44: 5, 11: 10, 31: 1, 50: 7, 2: 2}; metrics: {'count': 5, 'mean': 5.0, 'hit_rate': 0.4, 'liked': [11, 50], 'disliked': [31, 2]}
+Profile before: {'target_energy': 0.85, 'preferred_tags': ['epic', 'cinematic']}
+Profile after:  {'target_energy': 0.713, 'preferred_tags': ['epic', 'cinematic'], 'target_valence': 0.1, 'target_tempo': 122.5, 'favorite_mood': 'happy'}
+Comment "Descent song but just okay." changed: target_energy, target_tempo, target_valence.
+Comment "This is the one. It is perfect. I feel the spiratual feeling." changed: favorite_mood, target_energy, target_tempo.
+Recommendations: Mas Que Nada (0.70); Get Lucky (0.70); Stardew Valley Overture (0.69); Shape of You (0.68); Three Little Birds (0.67)
+User: 'ive me those songs you just recommended'
+Reference for extraction: ['examples_and_listening.md', 'examples_and_listening.md', 'examples_and_listening.md', 'word-to-number tables', 'song catalog']
+Gemini failed extracting preferences: Gemini call failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+User: 'I gave my ratings for them. But the previous recommended song sha la la by rainchy was the one I absolutly wanted. Now based on the feedback I gave recommend me some more songs'
+Reference for extraction: ['examples_and_listening.md', 'how_it_works.md', 'glossary_and_faq.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'I gave my ratings for them. But the previous recommended song sha la la by rainchy was the one I absolutly wanted. Now based on the feedback I gave recommend me some more songs'
+User: 'I gave my ratings for them. But the previous recommended song sha la la by rainchy was the one I absolutly wanted. Now based on the feedback I gave recommend me some more songs. My preferences are sha la la by rainchy  and look at the other ratings I gave'
+Reference for extraction: ['how_it_works.md', 'examples_and_listening.md', 'glossary_and_faq.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'I gave my ratings for them. But the previous recommended song sha la la by rainchy was the one I absolutly wanted. Now based on the feedback I gave recommend me some more songs. My preferences are sha la la by rainchy  and look at the other ratings I gave'

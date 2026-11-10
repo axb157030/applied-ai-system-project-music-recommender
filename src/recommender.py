@@ -131,8 +131,7 @@ class UserProfile:
         prefs = {
             "genre": self.favorite_genre,
             "mood": self.favorite_mood,
-            # Was "energy" before. The float loop in score_song only reads keys that
-            # start with "target_", so energy has to use the same naming.
+            # score_song only reads numeric keys that start with "target_".
             "target_energy": self.target_energy,
             "target_acousticness": self.target_acousticness,
             "target_popularity": self.target_popularity,
@@ -162,8 +161,7 @@ class UserProfile:
 # A feature is only scored if its key exists in the weights. The keys must match what
 # score_song passes to card.add(): "genre", "mood", "language", "decade", "tags",
 # "vocals", "preferred_occasions", and the <feature> part of every "target_<feature>".
-# The "explicit" weight is never used, because explicit songs are filtered out by
-# is_allowed() rather than scored. It is harmless but can be deleted.
+# The "explicit" weight is never used: explicit songs are removed by is_allowed(), not scored.
 
 @dataclass(frozen=True)
 class RankingStrategy:
@@ -273,7 +271,7 @@ class Recommender:
 
 def load_songs(csv_path: str) -> List[Dict]:
     """Load song rows from CSV, converting IDs and audio features to numbers."""
-    # instrumentalness and speechiness were missing here, so they stayed as strings.
+    # These columns are read as text, so they are converted to numbers here.
     numeric_fields = ("energy", "tempo_bpm", "valence", "danceability", "acousticness",
                       "popularity", "duration_sec", "instrumentalness", "speechiness")
     with open(csv_path, newline="", encoding="utf-8") as song_file:
@@ -306,8 +304,8 @@ def score_song(user_prefs: Dict, song: Dict, weights: Optional[Dict[str, float]]
     weights = weights if weights is not None else STRATEGIES["balanced"].weights
     card = ScoreCard(weights)
 
-    # Hand-written pref dicts may still use "energy". Copy the dict (so the caller's
-    # copy is untouched) and rename it to what the float loop below expects.
+    # Accept "energy" as a shortcut for "target_energy". Work on a copy so the caller's
+    # dict is not changed.
     user_prefs = dict(user_prefs)
     if user_prefs.get("target_energy") is None and user_prefs.get("energy") is not None:
         user_prefs["target_energy"] = user_prefs["energy"]
@@ -318,8 +316,7 @@ def score_song(user_prefs: Dict, song: Dict, weights: Optional[Dict[str, float]]
     preferred_genre = user_prefs.get("favorite_genre", user_prefs.get("genre"))
     if preferred_genre is not None and song.get("genre") is not None:
         song_genre = song["genre"]
-        # Compare case-insensitively everywhere. The "similar" check used to be
-        # case-sensitive, so "Pop" never matched "indie pop".
+        # Case-insensitive, so "Pop" matches "indie pop".
         wanted, actual = str(preferred_genre).casefold(), str(song_genre).casefold()
         if wanted == actual:
             card.add("genre", "genre", 1.0, f"exact match with {preferred_genre}")
@@ -384,8 +381,6 @@ def score_song(user_prefs: Dict, song: Dict, weights: Optional[Dict[str, float]]
             f"similarity {decade_similarity:.2f}")
 
     # Every float preference ("target_energy", "target_tempo", ...) goes through one loop.
-    # Energy and acousticness used to be excluded here AND had their own blocks removed,
-    # so they were never scored. They now go through the loop like everything else.
     for pref_key, target_value in user_prefs.items():
         if not pref_key.startswith("target_"):
             continue

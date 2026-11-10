@@ -1,0 +1,17 @@
+=== free text -> profile -> recommendations (end to end) ===
+
+USER: something calm to study to, no lyrics, nothing explicit
+PROFILE: {'favorite_mood': 'calm', 'target_energy': 0.1, 'vocals': 'instrumental', 'preferred_occasions': ['study'], 'allow_explicit': False, 'target_instrumentalness': 0.95}
+   0.99  Clair de Lune - Claude Debussy
+   0.96  Sweden - C418
+   0.96  Comptine d'un autre ete - Yann Tiersen
+   0.94  One Summer's Day - Joe Hisaishi
+   0.94  Cornfield Chase - Hans Zimmer
+
+USER: pumped up gym music, loud and fast, rap is fine
+PROFILE: {'favorite_genre': 'hiphop', 'favorite_mood': 'energetic', 'target_energy': 0.85, 'preferred_occasions': ['workout']}
+   0.66  Lose Yourself - Eminem
+   0.66  SICKO MODE - Travis Scott
+   0.62  Blinding Lights - The Weeknd
+   0.61  Gurenge - LiSA
+   0.60  Feel Good Inc. - Gorillaz

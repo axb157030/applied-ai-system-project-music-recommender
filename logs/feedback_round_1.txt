@@ -1,0 +1,23 @@
+ROUND 1 (profile: {'favorite_mood': 'calm', 'target_energy': 0.1, 'vocals': 'instrumental', 'preferred_occasions': ['study'], 'target_instrumentalness': 0.95})
+  rated  9  | match 100% | Clair de Lune                  energy 0.12
+  rated  2  | match 96% | Sweden                         energy 0.22
+  rated  8  | match 96% | Comptine d'un autre ete        energy 0.25
+  rated  3  | match 94% | One Summer's Day               energy 0.35
+  rated 10  | match 94% | Cornfield Chase                energy 0.35
+
+METRICS: {'mean': 6.4, 'hit_rate': 0.6}
+HEADLINE: The AI did a good job recommending songs you like.
+PROFILE BEFORE: {'target_energy': 0.1, 'target_instrumentalness': 0.95}
+PROFILE AFTER:  {'target_energy': 0.121, 'target_instrumentalness': 0.954}
+
+ROUND 2 (new songs only)
+  match 93% | Deltarune - Beginning/A Town C energy 0.38
+  match 92% | Undertale - Ruins (Orchestral  energy 0.42
+  match 87% | Weightless                     energy 0.1
+  match 81% | Undertale - Once Upon A Time ( energy 0.48
+  match 61% | Gymnopedie No. 1               energy 0.16
+
+GUARDRAIL: ratings of 0 and 11 and a missing song
+   {7: 0} -> Rating for song 7 must be 1-10, got 0.
+   {7: 11} -> Rating for song 7 must be 1-10, got 11.
+   {7: 9} -> Rate every song first. Still unrated: [16].
