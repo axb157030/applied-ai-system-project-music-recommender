@@ -60,6 +60,6 @@ User: 'quit'
 
 ## Other saved traces
 
-- [`logs/eval_results.txt`](logs/eval_results.txt): the evaluation harness run (57 checks).
+- [`logs/eval_results.txt`](logs/eval_results.txt): the evaluation harness run (73 checks).
 - [`logs/rag_and_extraction_check.txt`](logs/rag_and_extraction_check.txt): the same questions answered with and without the docs, and free-text extraction examples.
 - [`logs/feedback_round_1.txt`](logs/feedback_round_1.txt) and [`logs/end_to_end_check.txt`](logs/end_to_end_check.txt): earlier live runs from before the feedback rule and the extraction reference were fixed. Kept as evidence of the bugs described in the README.

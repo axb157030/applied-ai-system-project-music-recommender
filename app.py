@@ -17,6 +17,8 @@ HOW STREAMLIT WORKS (the one idea you need)
     (the Interview object, the chat history) is stored in st.session_state.
 """
 
+from pathlib import Path
+
 import streamlit as st
 
 from src.feedback import MAX_RATING, MIN_RATING
@@ -36,8 +38,9 @@ def new_session():
     """Create the Interview and the chat history. Called on first load and on 'Start over'."""
     outbox = []                                  # lines the Interview wants to show the user
     llm = GeminiClient()                         # raises RuntimeError when GEMINI_API_KEY is missing
-    songs = load_songs("data/songs.csv")
-    retriever = Retriever("docs", llm_client=llm)
+    here = Path(__file__).resolve().parent         # so it works wherever streamlit is launched from
+    songs = load_songs(str(here / "data" / "songs.csv"))
+    retriever = Retriever(str(here / "docs"), llm_client=llm)
 
     interview = Interview(songs, retriever, llm, say=outbox.append)
     interview.open_log()                         # writes the reasoning trace to logs/

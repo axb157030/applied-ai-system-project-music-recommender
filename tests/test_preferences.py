@@ -77,3 +77,56 @@ def test_invented_labels_are_dropped_with_vocab():
 
 def test_without_vocab_labels_are_kept():
     assert clean_preferences({"favorite_genre": "death polka"}) == {"favorite_genre": "death polka"}
+
+
+# ---------- songs the user names ----------
+
+from src.preferences import clean_preferences, find_song, seed_preferences, songs_by_artist
+
+CATALOG = [
+    {"id": 1, "title": "[Rainych] Hotaru no Hikari - Ikimono Gakari (cover)", "artist": "Rainych Ran",
+     "genre": "pop", "mood": "happy", "energy": 0.8, "valence": 0.8, "tempo_bpm": 180,
+     "occasion_tags": "singalong|morning", "mood_tags": "anime|upbeat", "vocals": "vocal", "language": "Japanese"},
+    {"id": 2, "title": "Clair de Lune", "artist": "Claude Debussy", "genre": "classical", "mood": "calm",
+     "energy": 0.1, "valence": 0.3, "tempo_bpm": 60, "occasion_tags": "sleep", "mood_tags": "gentle",
+     "vocals": "instrumental", "language": "none"},
+]
+
+
+def test_song_lists_are_kept_as_trimmed_strings_and_capped():
+    cleaned = clean_preferences({"liked_songs": [" Clair de Lune ", "", 5, None] + ["x"] * 10, "disliked_songs": "no"})
+    assert cleaned["liked_songs"][0] == "Clair de Lune"
+    assert len(cleaned["liked_songs"]) == 5
+    assert "disliked_songs" not in cleaned          # not a list
+
+
+def test_find_song_matches_titles_despite_typos_and_extra_words():
+    assert find_song("clare de lune", CATALOG)["id"] == 2
+    assert find_song("Hotaru no Hikari", CATALOG)["id"] == 1           # shorter than the catalog title
+    assert find_song("my favourite is Clair de Lune by Debussy", CATALOG)["id"] == 2
+
+
+def test_find_song_returns_none_for_unknown_or_empty_text():
+    assert find_song("Sha La La", CATALOG) is None
+    assert find_song("", CATALOG) is None
+    assert find_song("the weather in Paris", CATALOG) is None
+
+
+def test_songs_by_artist_handles_typos_and_ignores_short_words():
+    assert [s["id"] for s in songs_by_artist("Sha La La by Rainychy", CATALOG)] == [1]
+    assert songs_by_artist("by the sea", CATALOG) == []
+
+
+def test_seed_preferences_describe_the_named_songs():
+    prefs = seed_preferences([CATALOG[0]])
+    assert prefs["favorite_mood"] == "happy" and prefs["favorite_genre"] == "pop"
+    assert prefs["language"] == "japanese" and prefs["target_tempo"] == 180.0
+    assert prefs["preferred_occasions"] == ["singalong", "morning"]
+
+
+def test_seed_preferences_average_numbers_and_skip_language_none():
+    prefs = seed_preferences(CATALOG)
+    assert prefs["target_energy"] == 0.45
+    assert prefs["language"] == "japanese"                              # "none" never counts
+    assert "vocals" not in prefs                                         # the songs disagree
+    assert seed_preferences([]) == {}

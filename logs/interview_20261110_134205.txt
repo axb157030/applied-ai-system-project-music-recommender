@@ -1,0 +1,22 @@
+Initial profile: {}
+User: 'happy upbeat anime songs to sing along to'
+Reference for extraction: ['examples_and_listening.md', 'examples_and_listening.md', 'examples_and_listening.md', 'word-to-number tables', 'song catalog']
+Extracted: {'favorite_mood': 'happy', 'target_energy': 0.7, 'preferred_tags': ['singalong'], 'preferred_occasions': ['singalong'], 'target_valence': 0.75, 'target_tempo': 120.0}
+Profile now: {'favorite_mood': 'happy', 'target_energy': 0.7, 'preferred_tags': ['singalong'], 'preferred_occasions': ['singalong'], 'target_valence': 0.75, 'target_tempo': 120.0}
+Recommendations: [Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover) (0.74); Mas Que Nada (0.70); Get Lucky (0.70); Stardew Valley Overture (0.69); Shape of You (0.68)
+User: 'rate'
+Ratings: {11: 10, 28: 6, 24: 3, 18: 8, 38: 4}; metrics: {'count': 5, 'mean': 6.2, 'hit_rate': 0.4, 'liked': [11, 18], 'disliked': [24, 38]}
+Profile before: {'favorite_mood': 'happy', 'target_energy': 0.7, 'preferred_tags': ['singalong'], 'preferred_occasions': ['singalong'], 'target_valence': 0.75, 'target_tempo': 120.0}
+Profile after:  {'favorite_mood': 'happy', 'target_energy': 0.702, 'preferred_tags': ['singalong', 'upbeat', 'anime', 'nostalgic'], 'preferred_occasions': ['singalong', 'morning'], 'target_valence': 0.722, 'target_tempo': 132.446, 'favorite_genre': 'pop', 'language': 'japanese'}
+Learned from your ratings: favorite genre = pop.
+Learned from your ratings: language = japanese.
+Learned from your ratings: added preferred occasions morning.
+Learned from your ratings: added preferred tags upbeat, anime, nostalgic.
+Recommendations: Levitating (0.72); Gurenge (0.53); Three Little Birds (0.50); September (0.49); Blinding Lights (0.47)
+User: 'I gave my ratings for them. But the previous recommended song sha la la by rainchy was the one I absolutely wanted. Now based on the feedback I gave recommend me some more songs. My preferences are sha la la by rainchy and look at the other ratings I gave'
+Reference for extraction: ['how_it_works.md', 'examples_and_listening.md', 'glossary_and_faq.md', 'word-to-number tables', 'song catalog']
+Extracted: {'liked_songs': ['sha la la by rainchy']}
+Liked songs: ['[Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover)']; disliked: []
+Profile now: {'favorite_mood': 'happy', 'target_energy': 0.85, 'preferred_tags': ['anime', 'nostalgic', 'upbeat'], 'preferred_occasions': ['singalong', 'morning'], 'target_valence': 0.78, 'target_tempo': 180.0, 'favorite_genre': 'pop', 'language': 'japanese', 'vocals': 'vocal', 'target_acousticness': 0.2, 'target_danceability': 0.62}
+Recommendations: Levitating (0.75); Gurenge (0.60); September (0.57); Blinding Lights (0.57); Three Little Birds (0.56)
+User: 'quit'

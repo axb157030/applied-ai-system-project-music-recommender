@@ -181,7 +181,7 @@ def test_regenerate_applies_comments_after_the_arithmetic():
 
 def test_regenerate_ignores_comments_without_an_llm():
     result = regenerate({"target_energy": 0.5}, {1: 9, 2: 8, 3: 1}, SONGS, comments={3: "too loud"})
-    assert result["notes"] == []
+    assert not any("Comment" in note for note in result["notes"])
 
 
 def test_regenerate_leaves_out_songs_from_earlier_rounds():
@@ -202,3 +202,51 @@ def test_comment_prompt_says_whether_the_song_was_liked():
     apply_comments({}, {1: "love the piano"}, SONGS, llm, ratings={1: 9})
     assert "rated it 2/10" in llm.texts[0] and "INSTEAD" in llm.texts[0]
     assert "rated it 9/10" in llm.texts[1] and "what they liked" in llm.texts[1]
+
+
+# ---------- learning labels from the whole history ----------
+
+from src.feedback import learn_labels
+
+LABELED = [
+    {"id": 1, "title": "A", "genre": "pop", "mood": "happy", "language": "Japanese", "occasion_tags": "morning|party", "mood_tags": "upbeat"},
+    {"id": 2, "title": "B", "genre": "pop", "mood": "happy", "language": "English", "occasion_tags": "party", "mood_tags": "fun"},
+    {"id": 3, "title": "C", "genre": "metal", "mood": "intense", "language": "English", "occasion_tags": "workout", "mood_tags": "loud"},
+]
+
+
+def test_unknown_labels_are_learned_from_liked_songs():
+    profile, notes = learn_labels({}, {1: 9, 2: 8, 3: 2}, LABELED)
+    assert profile["favorite_mood"] == "happy" and profile["favorite_genre"] == "pop"
+    assert "party" in profile["preferred_occasions"]
+    assert "metal" not in str(profile) and "workout" not in str(profile)     # disliked labels are not learned
+    assert any("favorite mood" in note for note in notes)
+
+
+def test_a_single_lukewarm_rating_is_not_enough():
+    profile, notes = learn_labels({}, {1: 7}, LABELED)                         # 7 - 5.5 = 1.5 < 3
+    assert profile == {} and notes == []
+
+
+def test_history_accumulates_across_rounds():
+    # One rating alone is too weak (2.5), two together pass the threshold.
+    assert learn_labels({}, {1: 8}, LABELED)[0] == {}
+    assert learn_labels({}, {1: 8, 2: 8}, LABELED)[0]["favorite_mood"] == "happy"
+
+
+def test_a_stated_label_is_kept_unless_the_ratings_went_against_it():
+    kept, _ = learn_labels({"favorite_mood": "intense"}, {1: 9, 2: 9}, LABELED)
+    assert kept["favorite_mood"] == "intense"                                  # no song with it was rated low
+    changed, notes = learn_labels({"favorite_mood": "intense"}, {1: 9, 2: 9, 3: 1}, LABELED)
+    assert changed["favorite_mood"] == "happy" and any("went against" in note for note in notes)
+
+
+def test_learning_does_not_modify_the_input_or_overfill_lists():
+    profile = {"preferred_occasions": ["a", "b", "c"]}
+    new, _ = learn_labels(profile, {1: 10, 2: 10}, LABELED)
+    assert profile == {"preferred_occasions": ["a", "b", "c"]} and len(new["preferred_occasions"]) <= 4
+
+
+def test_regenerate_uses_the_earlier_rounds_too():
+    result = regenerate({}, {2: 8}, LABELED, history={1: 8})
+    assert result["profile"]["favorite_mood"] == "happy"

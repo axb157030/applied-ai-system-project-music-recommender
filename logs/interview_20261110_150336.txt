@@ -1,0 +1,29 @@
+Initial profile: {}
+Blocked input (category: self_harm)
+User: 'I want to go to bed and never wake up'
+Reference for extraction: ['word-to-number tables', 'song catalog']
+Extracted: {'favorite_mood': 'sad', 'target_energy': 0.1, 'preferred_occasions': ['sleep'], 'target_valence': 0.1}
+Profile now: {'favorite_mood': 'sad', 'target_energy': 0.1, 'preferred_occasions': ['sleep'], 'target_valence': 0.1}
+Recommendations: Moonlight Sonata (1st Movement) (0.85); Hallelujah (0.83); Mad World (0.83); Someone Like You (0.79); Weightless (0.56)
+User: 'I want to scream'
+Reference for extraction: ['word-to-number tables', 'song catalog']
+Extracted: {'preferred_occasions': ['venting']}
+Profile now: {'favorite_mood': 'sad', 'target_energy': 0.1, 'preferred_occasions': ['venting'], 'target_valence': 0.1}
+Recommendations: Moonlight Sonata (1st Movement) (0.85); Hallelujah (0.83); Mad World (0.83); Someone Like You (0.79); Weightless (0.42)
+User: 'I want to kill this chicken and eat it'
+Reference for extraction: ['word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'I want to kill this chicken and eat it'
+User: 'I am not asking for music. I am complaining about wanting to kill chickens and eating them'
+Reference for extraction: ['glossary_and_faq.md', 'interview_playbook.md', 'glossary_and_faq.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'I am not asking for music. I am complaining about wanting to kill chickens and eating them'
+User: 'What is the capital of britain'
+Docs have no answer for 'What is the capital of britain'
+Reference for extraction: ['word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'What is the capital of britain'
+User: 'I was not giving you preferences'
+Reference for extraction: ['what_you_can_tell_me.md', 'glossary_and_faq.md', 'glossary_and_faq.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'I was not giving you preferences'

@@ -1,0 +1,119 @@
+Initial profile: {}
+User: 'Give me some music that has a theme of grandeur. That fills you with determination. That is spiratual and makes you feel that you are on a journey. I want those songs.'
+Reference for extraction: ['moods_genres_and_tags.md', 'examples_and_listening.md', 'examples_and_listening.md', 'word-to-number tables', 'song catalog']
+Extracted: {'preferred_tags': ['grand', 'determined', 'epic'], 'preferred_occasions': ['travel']}
+Profile now: {'preferred_tags': ['grand', 'determined', 'epic'], 'preferred_occasions': ['travel']}
+Recommendations: Sunset Lover (0.40); One Summer's Day (0.40); Bohemian Rhapsody (0.20); Lose Yourself (0.20); Symphony No. 9 in E Minor, Op. 95, B. 178 "From the New World": IV. Allegro con fuoco (0.20)
+Ratings: {9: 2, 19: 10, 3: 8, 5: 1, 20: 9}; metrics: {'count': 5, 'mean': 6.0, 'hit_rate': 0.6, 'liked': [19, 3, 20], 'disliked': [9, 5]}
+Profile before: {'preferred_tags': ['grand', 'determined', 'epic'], 'preferred_occasions': ['travel']}
+Profile after:  {'preferred_tags': ['grand', 'determined', 'epic', 'dramatic'], 'preferred_occasions': ['travel', 'study', 'focus', 'dramatic listening'], 'favorite_genre': 'orchestral', 'favorite_mood': 'calm'}
+Learned from your ratings: favorite genre = orchestral.
+Learned from your ratings: favorite mood = calm.
+Learned from your ratings: added preferred occasions study, focus, dramatic listening.
+Learned from your ratings: added preferred tags dramatic.
+Recommendations: Undertale - Once Upon A Time (Orchestral Cover) (0.75); Undertale - Ruins (Orchestral Remix) (0.75); Deltarune - Beginning/A Town Called Hometown (Orchestral Arrangement) (0.65); Cornfield Chase (0.39); Clair de Lune (0.36)
+User: 'I really like songs from Rainchy'
+Reference for extraction: ['interview_playbook.md', 'what_you_can_tell_me.md', 'examples_and_listening.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+RAG answer: If the artist Rainchy is not in the catalog, the app will let you know and ask what you like about it, such as if it is fast, sad, or has no lyrics. Naming songs or artists is a great way to say what you want. 
+
+Sources: interview_playbook.md, what_you_can_tell_me.md
+Ratings: {12: 10, 14: 10, 13: 10, 45: 6, 7: 7}; metrics: {'count': 5, 'mean': 8.6, 'hit_rate': 0.8, 'liked': [12, 14, 13, 7], 'disliked': []}
+Profile before: {'preferred_tags': ['grand', 'determined', 'epic', 'dramatic'], 'preferred_occasions': ['travel', 'study', 'focus', 'dramatic listening'], 'favorite_genre': 'orchestral', 'favorite_mood': 'calm'}
+Profile after:  {'preferred_tags': ['grand', 'determined', 'epic', 'dramatic'], 'preferred_occasions': ['travel', 'study', 'focus', 'dramatic listening'], 'favorite_genre': 'orchestral', 'favorite_mood': 'calm'}
+Recommendations: Sweden (0.36); Comptine d'un autre ete (0.36); Weightless (0.33); Strobe (0.07); Gurenge (0.04)
+User: 'What? I like the previous recommendation of songs more, but I want it to improve, I want songs from rainchy who made a song in japanese to be a part of the music I am recommended'
+Docs have no answer for 'What? I like the previous recommendation of songs more, but I want it to improve, I want songs from rainchy who made a song in japanese to be a part of the music I am recommended'
+Reference for extraction: ['what_you_can_tell_me.md', 'what_you_can_tell_me.md', 'examples_and_listening.md', 'word-to-number tables', 'song catalog']
+Extracted: {'language': 'japanese', 'liked_songs': ["One Summer's Day", 'Undertale - Once Upon A Time (Orchestral Cover)', 'Undertale - Ruins (Orchestral Remix)', 'Deltarune - Beginning/A Town Called Hometown (Orchestral Arrangement)'], 'disliked_songs': ['Sunset Lover', 'Lose Yourself']}
+Liked songs: ["One Summer's Day", 'Undertale - Once Upon A Time (Orchestral Cover)', 'Undertale - Ruins (Orchestral Remix)', 'Deltarune - Beginning/A Town Called Hometown (Orchestral Arrangement)']; disliked: ['Sunset Lover', 'Lose Yourself']
+Profile now: {'preferred_tags': ['nostalgic', 'game', 'gentle'], 'preferred_occasions': ['study', 'relax', 'travel'], 'favorite_genre': 'orchestral', 'favorite_mood': 'calm', 'vocals': 'instrumental', 'target_energy': 0.407, 'target_valence': 0.667, 'target_acousticness': 0.8, 'target_danceability': 0.335, 'target_tempo': 92.5, 'language': 'japanese'}
+Recommendations: Deltarune - Beginning/A Town Called Hometown (Orchestral Arrangement) (0.89); Undertale - Ruins (Orchestral Remix) (0.86); Undertale - Once Upon A Time (Orchestral Cover) (0.91); One Summer's Day (0.90); Sweden (0.64)
+Ratings: {13: 10, 14: 10, 12: 10, 19: 8, 16: 6}; metrics: {'count': 5, 'mean': 8.8, 'hit_rate': 0.8, 'liked': [13, 14, 12, 19], 'disliked': []}
+Profile before: {'preferred_tags': ['nostalgic', 'game', 'gentle'], 'preferred_occasions': ['study', 'relax', 'travel'], 'favorite_genre': 'orchestral', 'favorite_mood': 'calm', 'vocals': 'instrumental', 'target_energy': 0.407, 'target_valence': 0.667, 'target_acousticness': 0.8, 'target_danceability': 0.335, 'target_tempo': 92.5, 'language': 'japanese'}
+Profile after:  {'preferred_tags': ['nostalgic', 'game', 'gentle', 'dramatic'], 'preferred_occasions': ['study', 'relax', 'travel', 'focus'], 'favorite_genre': 'orchestral', 'favorite_mood': 'calm', 'vocals': 'instrumental', 'target_energy': 0.451, 'target_valence': 0.668, 'target_acousticness': 0.832, 'target_danceability': 0.347, 'target_tempo': 93.611, 'language': 'japanese'}
+Learned from your ratings: added preferred occasions focus.
+Learned from your ratings: added preferred tags dramatic.
+Recommendations: Comptine d'un autre ete (0.61); Weightless (0.48); Gymnopedie No. 1 (0.40); Aruarian Dance (0.40); Stardew Valley Overture (0.40)
+User: 'No No! the previous recommendation was better. Bring the japanese song sung by rainchy the hatu whatever'
+Reference for extraction: ['examples_and_listening.md', 'glossary_and_faq.md', 'glossary_and_faq.md', 'word-to-number tables', 'song catalog']
+Extracted: {'favorite_genre': 'j-pop', 'language': 'japanese', 'liked_songs': ['Hotaru no Hikari by Rainych Ran']}
+Liked songs: ['[Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover)']; disliked: []
+Profile now: {'preferred_tags': ['anime', 'nostalgic', 'upbeat'], 'preferred_occasions': ['singalong', 'morning'], 'favorite_genre': 'j-pop', 'favorite_mood': 'happy', 'vocals': 'vocal', 'target_energy': 0.85, 'target_valence': 0.78, 'target_acousticness': 0.2, 'target_danceability': 0.62, 'target_tempo': 180.0, 'language': 'japanese'}
+Recommendations: [Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover) (0.95); Levitating (0.70); Shape of You (0.65); Gurenge (0.65); September (0.57)
+User: 'Excellent and also the previous previous top recommendation like one with summer and it was for the spirited away movie and another was deltaturne another was a similar music to that'
+Reference for extraction: ['what_you_can_tell_me.md', 'moods_genres_and_tags.md', 'examples_and_listening.md', 'word-to-number tables', 'song catalog']
+Extracted: {'liked_songs': ["One Summer's Day", 'Undertale - Beginning/A Town Called Hometown (Orchestral Arrangement)']}
+Liked songs: ["One Summer's Day", 'Deltarune - Beginning/A Town Called Hometown (Orchestral Arrangement)']; disliked: []
+Profile now: {'preferred_tags': ['nostalgic', 'gentle', 'summer'], 'preferred_occasions': ['study', 'relax', 'travel'], 'favorite_genre': 'orchestral', 'favorite_mood': 'calm', 'vocals': 'instrumental', 'target_energy': 0.365, 'target_valence': 0.7, 'target_acousticness': 0.79, 'target_danceability': 0.32, 'target_tempo': 89.0, 'language': 'japanese'}
+Recommendations: Deltarune - Beginning/A Town Called Hometown (Orchestral Arrangement) (0.86); One Summer's Day (0.94); Comptine d'un autre ete (0.63); Weightless (0.50); Gymnopedie No. 1 (0.43)
+User: 'Great but include the rainchy one and all the undertale songs'
+Reference for extraction: ['examples_and_listening.md', 'examples_and_listening.md', 'glossary_and_faq.md', 'word-to-number tables', 'song catalog']
+Extracted: {'liked_songs': ['[Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover)', 'Undertale - Once Upon A Time (Orchestral Cover)', 'Undertale - Ruins (Orchestral Remix)', 'Deltarune - Beginning/A Town Called Hometown (Orchestral Arrangement)']}
+Liked songs: ['[Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover)', 'Undertale - Once Upon A Time (Orchestral Cover)', 'Undertale - Ruins (Orchestral Remix)', 'Deltarune - Beginning/A Town Called Hometown (Orchestral Arrangement)']; disliked: []
+Profile now: {'preferred_tags': ['nostalgic', 'game', 'anime'], 'preferred_occasions': ['study', 'relax', 'singalong'], 'favorite_genre': 'orchestral', 'favorite_mood': 'calm', 'vocals': 'instrumental', 'target_energy': 0.532, 'target_valence': 0.688, 'target_acousticness': 0.655, 'target_danceability': 0.415, 'target_tempo': 115.5, 'language': 'japanese'}
+Recommendations: Deltarune - Beginning/A Town Called Hometown (Orchestral Arrangement) (0.85); Undertale - Ruins (Orchestral Remix) (0.82); Undertale - Once Upon A Time (Orchestral Cover) (0.86); [Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover) (0.38); Comptine d'un autre ete (0.55)
+User: 'Great I added the ratings that is my list'
+Reference for extraction: ['what_you_can_tell_me.md', 'glossary_and_faq.md', 'how_it_works.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+RAG answer: Once you finish rating all 5 songs from 1 to 10, the app shows your average rating and how many songs you rated 7 or higher. High ratings pull your profile toward their properties, while low ratings push it away. You can also add an optional comment on any song, such as "too slow". 
+
+Files relied on: `how_it_works.md`, `glossary_and_faq.md`, `what_you_can_tell_me.md`
+User: 'I want to kill chicken so that I can eat them'
+Reference for extraction: ['glossary_and_faq.md', 'glossary_and_faq.md', 'moods_genres_and_tags.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'I want to kill chicken so that I can eat them'
+Ratings: {13: 10, 14: 10, 12: 10, 11: 10, 36: 6}; metrics: {'count': 5, 'mean': 9.2, 'hit_rate': 0.8, 'liked': [13, 14, 12, 11], 'disliked': []}
+Profile before: {'preferred_tags': ['nostalgic', 'game', 'anime'], 'preferred_occasions': ['study', 'relax', 'singalong'], 'favorite_genre': 'orchestral', 'favorite_mood': 'calm', 'vocals': 'instrumental', 'target_energy': 0.532, 'target_valence': 0.688, 'target_acousticness': 0.655, 'target_danceability': 0.415, 'target_tempo': 115.5, 'language': 'japanese'}
+Profile after:  {'preferred_tags': ['nostalgic', 'game', 'anime', 'gentle'], 'preferred_occasions': ['study', 'relax', 'singalong', 'morning'], 'favorite_genre': 'orchestral', 'favorite_mood': 'calm', 'vocals': 'instrumental', 'target_energy': 0.603, 'target_valence': 0.735, 'target_acousticness': 0.581, 'target_danceability': 0.431, 'target_tempo': 121.875, 'language': 'japanese'}
+Learned from your ratings: added preferred occasions morning.
+Learned from your ratings: added preferred tags gentle.
+Recommendations: Weightless (0.46); Stardew Valley Overture (0.44); Spring (The Four Seasons) (0.39); Aruarian Dance (0.39); Take Five (0.37)
+User: 'I want to eat chicken so that I can eat them'
+Reference for extraction: ['glossary_and_faq.md', 'glossary_and_faq.md', 'moods_genres_and_tags.md', 'word-to-number tables', 'song catalog']
+Gemini failed extracting preferences: Gemini call failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+User: 'I want to eat chicken so that I can eat them'
+Reference for extraction: ['glossary_and_faq.md', 'glossary_and_faq.md', 'moods_genres_and_tags.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'I want to eat chicken so that I can eat them'
+Blocked input (category: self_harm)
+User: 'What is the capital of britain'
+Docs have no answer for 'What is the capital of britain'
+Reference for extraction: ['word-to-number tables', 'song catalog']
+Extracted: {}
+Off topic (no doc answer, no preference): 'What is the capital of britain'
+User: 'What is energy, acousticness and other music attributes that I likely do not know such as tempo'
+RAG answer: Acousticness measures how much a song uses real instruments versus electronic ones on a scale from 0 to 1, with a high acousticness example being *Clair de Lune* by Claude Debussy (0.98). Please note that the numbers for energy, danceability, valence, and other attributes in our app are estimated by hand rather than being exact measurements. You can describe your preferences using these attributes in plain words—such as asking for "loud and fast" for energy, or "slow" for tempo—without needing to use actual numbers. 
+
+Files relied on: glossary_and_faq.md, what_you_can_tell_me.md, attributes.md
+User: 'refine'
+Unknown attributes: ['preferred_decade', 'target_popularity', 'target_duration']; asking about 'preferred_decade'
+Retrieved for 'preferred_decade': ['attributes.md', 'how_it_works.md', 'what_you_can_tell_me.md']
+Question: Do you have a preferred decade for the music you want to hear, such as the 1960s, 1990s, or 2020s?
+User: 'in the 2000s'
+Reference for extraction: ['attributes.md', 'how_it_works.md', 'what_you_can_tell_me.md', 'word-to-number tables', 'song catalog']
+Extracted: {'preferred_decade': 2000}
+Profile now: {'preferred_tags': ['nostalgic', 'game', 'anime', 'gentle'], 'preferred_occasions': ['study', 'relax', 'singalong', 'morning'], 'favorite_genre': 'orchestral', 'favorite_mood': 'calm', 'vocals': 'instrumental', 'target_energy': 0.603, 'target_valence': 0.735, 'target_acousticness': 0.581, 'target_danceability': 0.431, 'target_tempo': 121.875, 'language': 'japanese', 'preferred_decade': 2000}
+Recommendations: Weightless (0.47); Stardew Valley Overture (0.45); Aruarian Dance (0.42); Megalovania (0.37); Spring (The Four Seasons) (0.37)
+Unknown attributes: ['target_popularity', 'target_duration']; asking about 'target_popularity'
+Retrieved for 'target_popularity': ['attributes.md', 'examples_and_listening.md', 'how_it_works.md']
+Question: Do you prefer hidden gems, songs you're somewhat familiar with, well-known tracks, or chart hits?
+User: 'What is the most important attribute for a song to have'
+Docs have no answer for 'What is the most important attribute for a song to have'
+Reference for extraction: ['glossary_and_faq.md', 'glossary_and_faq.md', 'attributes.md', 'attributes.md', 'examples_and_listening.md', 'how_it_works.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+Off topic (no doc answer, no preference): 'What is the most important attribute for a song to have'
+User: 'music has a list of attributes such as tempo, energy, genre. What are the most important attributes from them to have'
+Reference for extraction: ['moods_genres_and_tags.md', 'glossary_and_faq.md', 'how_it_works.md', 'attributes.md', 'examples_and_listening.md', 'how_it_works.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'music has a list of attributes such as tempo, energy, genre. What are the most important attributes from them to have'
+Skipping 'target_popularity': no usable preference in the reply
+Unknown attributes: ['target_duration']; asking about 'target_duration'
+Retrieved for 'target_duration': ['attributes.md', 'glossary_and_faq.md', 'how_it_works.md']
+Question: Do you prefer short songs (under 180 seconds), medium songs (180 to 300 seconds), or long songs (over 360 seconds)?
+User: 'what attributes do songs have'
+RAG answer: Songs in the app have attributes such as energy, valence, and danceability, along with a mood. Please note that these numbers and values were estimated by hand for the project and are close guides rather than precise measurements. 
+
+Files relied on: glossary_and_faq.md, how_it_works.md
+User: 'quit'
+User: 'quit'

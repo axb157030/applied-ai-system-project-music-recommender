@@ -159,12 +159,18 @@ Do not guess.
   vocals: "vocal" or "instrumental"
   target_duration: seconds
   preferred_occasions: list of strings
-  language: string
+  language: string (one preferred lyrics language)
+  only_languages: list of languages, ONLY when the user says they want songs only in those
+                  languages (e.g. "only English or Japanese"). Otherwise null.
   allow_explicit: false only if the user wants no explicit songs, otherwise null
   target_valence: number 0 (sad) to 1 (happy)
   target_tempo: BPM
   target_danceability: number 0-1
   target_instrumentalness: number 0-1
+  liked_songs: list of song titles the user says they like, loved, or want more like
+  disliked_songs: list of song titles the user says they dislike or do not want
+If the message lists songs the user was shown, write the exact title from that list.
+Only fill the song lists when the user names or clearly points to a specific song.
 
 Reference:
 {reference}

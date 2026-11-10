@@ -1,0 +1,13 @@
+Initial profile: {}
+User: 'calm acoustic songs for studying'
+Reference for extraction: ['interview_playbook.md', 'glossary_and_faq.md', 'examples_and_listening.md', 'word-to-number tables', 'song catalog']
+Extracted: {'favorite_mood': 'calm', 'target_energy': 0.25, 'target_acousticness': 0.8, 'preferred_occasions': ['study']}
+Profile now: {'favorite_mood': 'calm', 'target_energy': 0.25, 'target_acousticness': 0.8, 'preferred_occasions': ['study']}
+Recommendations: Comptine d'un autre ete (0.97); One Summer's Day (0.97); Deltarune - Beginning/A Town Called Hometown (Orchestral Arrangement) (0.97); Sweden (0.96); Undertale - Ruins (Orchestral Remix) (0.95)
+Ratings: {36: 9, 19: 9, 13: 9, 16: 3, 14: 3}; metrics: {'count': 5, 'mean': 6.6, 'hit_rate': 0.6, 'liked': [36, 19, 13], 'disliked': [16, 14]}
+Profile before: {'favorite_mood': 'calm', 'target_energy': 0.25, 'target_acousticness': 0.8, 'preferred_occasions': ['study']}
+Profile after:  {'favorite_mood': 'calm', 'target_energy': 0.252, 'target_acousticness': 0.83, 'preferred_occasions': ['study', 'relax', 'travel'], 'favorite_genre': 'orchestral', 'preferred_tags': ['gentle', 'nostalgic', 'piano', 'whimsical']}
+Learned from your ratings: favorite genre = orchestral.
+Learned from your ratings: added preferred occasions relax, travel.
+Learned from your ratings: added preferred tags gentle, nostalgic, piano, whimsical.
+Recommendations: Undertale - Once Upon A Time (Orchestral Cover) (0.88); Clair de Lune (0.59); Cornfield Chase (0.52); Weightless (0.47); River Flows in You (0.34)

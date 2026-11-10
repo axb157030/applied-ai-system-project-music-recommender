@@ -15,6 +15,9 @@ from src.guardrails import MAX_INPUT_CHARS, check_guardrails, check_input
     "music from 1990 2000 2010 2020",
     "songs about love and loss",
     "quit",
+    "I want to kill and then eat chicken",
+    "What is the capital of britain",
+    "songs to kill them with kindness",
 ])
 def test_normal_music_requests_are_allowed(text):
     assert check_input(text).allowed

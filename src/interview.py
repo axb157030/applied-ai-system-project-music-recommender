@@ -34,6 +34,7 @@ class: they call respond(text) for each message and prompt() for the next questi
 """
 
 import os
+import pathlib
 from datetime import datetime
 
 from .llm import GeminiClient, LLMError
@@ -42,9 +43,12 @@ from .preferences import (
     build_vocab,
     clean_preferences,
     enough_to_recommend,
+    find_song,
+    seed_preferences,
+    songs_by_artist,
     unknown_attributes,
 )
-from .recommender import load_songs, recommend_songs
+from .recommender import load_songs, recommend_songs, score_song
 from .retriever import Retriever
 from .feedback import LIKE_AT_LEAST, MAX_RATING, MIN_RATING, regenerate
 from .guardrails import check_input
@@ -60,6 +64,19 @@ RATE_WORDS = {"rate", "rate songs", "rate these", "ratings"}
 PROFILE_WORDS = {"profile", "my profile", "preferences"}
 RESET_WORDS = {"reset", "start over"}
 REFINE_WORDS = {"refine", "more", "keep going", "ask me more"}
+# These are asked as "what preferences can I tell you about?" (every word of them is filler,
+# so the retriever could not search for them as typed).
+HELP_PHRASES = {"help", "options", "what can i say", "what can i tell you", "what can i ask",
+                "what can i do", "what can you do", "what should i say"}
+HELP_QUESTION = "what preferences can I tell you about"
+# A message starting like this is a request for information even without a "?", so it is
+# looked up in the docs first ("Tell me about some preferences I could give").
+QUESTION_STARTS = (
+    "what", "whats", "how", "why", "which", "who", "where", "when", "can you", "could you",
+    "do you", "does", "is there", "are there", "tell me", "explain", "describe", "help",
+    "give me some examples", "list",
+)
+PROJECT_DIR = pathlib.Path(__file__).resolve().parent.parent     # so paths work from any folder
 SKIP_WORDS = {
     "skip", "pass", "no preference", "no idea", "not sure", "idk",
     "dont care", "don't care", "any", "anything", "whatever",
@@ -85,8 +102,8 @@ FREE_PROMPT = (
     "or type 'refine', 'recommend', 'rate' or 'quit'."
 )
 NOT_IN_DOCS = (
-    "I couldn't find that in my reference docs. I can explain things like "
-    "energy, tempo, valence, acousticness, moods and genres."
+    "I'm a music recommender, so that's outside what I can help with. I can find songs for you, "
+    "or explain things like energy, tempo, valence, acousticness, moods and genres."
 )
 GEMINI_DOWN = "I couldn't reach Gemini just now. Please try again in a moment."
 NO_TASTE_YET = (
@@ -118,6 +135,11 @@ FALLBACK_QUESTIONS = {
 def _normalize(text):
     """Lowercase, straighten apostrophes, drop trailing . or ! (for command matching)."""
     return text.lower().replace("\u2019", "'").strip().rstrip(".!").strip()
+
+
+def _looks_like_question(text):
+    """True for "what is tempo", "tell me about moods", ... (a question typed without "?")."""
+    return _normalize(text).startswith(QUESTION_STARTS)
 
 
 def _is_refusal(answer):
@@ -199,6 +221,17 @@ def extraction_reference(retriever, vocab, queries):
     return snippets
 
 
+def _profile_changes(before, after):
+    """["target energy 0.25 -> 0.54", "favorite mood added: calm", ...] for every key that changed."""
+    changes = []
+    for key, new in after.items():
+        old = before.get(key)
+        if old != new:
+            name = key.replace("_", " ")
+            changes.append(f"{name} added: {new}" if old is None else f"{name} {old} -> {new}")
+    return changes
+
+
 def _reasons_text(explanation):
     """The recommender's explanation without its final 'total: ...' line."""
     parts = [p for p in str(explanation).split("; ") if p and not p.startswith("total:")]
@@ -245,7 +278,9 @@ class Interview:
         self.gave_up = False          # stopped asking before we had enough preferences
         self.refining = False         # user typed "refine": keep asking even though ready
         self.last_recommendations = []
-        self.rated_ids = set()        # songs the user has rated; never shown again
+        self.rated_ids = set()        # songs the user already knows (rated or named); never shown again
+        self.pinned_ids = []          # songs the user asked for by name: shown first in the next list
+        self.ratings_history = {}     # {song_id: rating} over ALL rounds, used to learn labels
         self.history = []             # metrics of each rated round (see feedback.compute_metrics)
         self._log = None
 
@@ -408,8 +443,12 @@ class Interview:
             self._start_refining()
         elif command in SKIP_WORDS:
             self._skip_pending("user chose to skip")
+        elif command in HELP_PHRASES:
+            self._answer_question(HELP_QUESTION)
         elif text.endswith("?"):
             self._answer_question(text)
+        elif _looks_like_question(text):
+            self._answer_or_take_preferences(text)
         else:
             self._take_preferences(text)
         return None
@@ -437,6 +476,17 @@ class Interview:
         self.say({"answer": answer, "refused": NOT_IN_DOCS, "error": GEMINI_DOWN}[status])
         self._count_clarification()
 
+    def _answer_or_take_preferences(self, text):
+        """Question-like text without "?": try the docs first, and if they have nothing, treat it as taste."""
+        status, answer = self._ask_docs(text)
+        if status == "answer":
+            self.say(answer)
+            self._count_clarification()
+        elif status == "error":
+            self.say(GEMINI_DOWN)
+        else:
+            self._take_preferences(text, asked_docs=True)       # the docs had nothing: maybe it is taste
+
     def _count_clarification(self):
         """A pending question gets MAX_CLARIFICATIONS side questions, then we move on."""
         if self.pending_attr is None:
@@ -459,9 +509,44 @@ class Interview:
         self._trace(f"Reference for extraction: {[name for name, _ in snippets]}")
         return snippets
 
-    def _take_preferences(self, text):
+    def _songs_context(self):
+        """Tell Gemini which songs the user has seen or rated, so "the Rainych one" can be matched to a title."""
+        by_id = {song["id"]: song for song in self.songs}
+        lines = [f'"{by_id[i]["title"]}" by {by_id[i]["artist"]} (rated {rating})'
+                 for i, rating in self.ratings_history.items() if i in by_id]
+        lines += [f'"{song["title"]}" by {song["artist"]} (not rated yet)'
+                  for song, _score, _why in self.last_recommendations if song["id"] not in self.ratings_history]
+        return "; ".join(lines[-15:])
+
+    def _resolve_songs(self, mentions):
+        """
+        Match the song names Gemini found to catalog songs (in code, never trusting Gemini).
+        Returns (songs, messages). If a title is not in the catalog but its artist is,
+        the artist's songs are used and the user is told.
+        """
+        found, messages = [], []
+        for mention in mentions:
+            song = find_song(mention, self.songs)
+            if song:
+                found.append(song)
+                continue
+            by_artist = songs_by_artist(mention, self.songs)
+            if by_artist:
+                titles = ", ".join(s["title"] for s in by_artist[:2])
+                messages.append(f"I don't have \"{mention}\", but I do have {titles} by that artist, so I'll use that.")
+                found.extend(by_artist[:2])
+            else:
+                messages.append(f"I couldn't find \"{mention}\" in my catalog.")
+        return found, messages
+
+    def _take_preferences(self, text, asked_docs=False):
+        """asked_docs: the docs were already searched for this text, so do not search them again."""
+        prompt_text = text
+        context = self._songs_context()
+        if context:
+            prompt_text += f"\n\n(Songs the user has seen or rated: {context})"
         try:
-            extracted = self.llm.extract_preferences(text, self._reference_for(text), self.vocab)
+            extracted = self.llm.extract_preferences(prompt_text, self._reference_for(text), self.vocab)
         except LLMError as error:
             self._trace(f"Gemini failed extracting preferences: {error}")
             self.say(GEMINI_DOWN)
@@ -472,15 +557,49 @@ class Interview:
         extracted = clean_preferences(extracted, self.vocab)
         self._trace(f"Extracted: {extracted}")
 
-        if not extracted:
-            self._no_preference_found(text)
+        liked, messages = self._resolve_songs(extracted.pop("liked_songs", []))
+        disliked, avoid_messages = self._resolve_songs(extracted.pop("disliked_songs", []))
+        for message in messages + avoid_messages:
+            self.say(message)
+        seeds = seed_preferences(liked)
+        if liked or disliked:
+            self._trace(f"Liked songs: {[s['title'] for s in liked]}; disliked: {[s['title'] for s in disliked]}")
+
+        if not extracted and not seeds and not disliked:
+            if messages or avoid_messages:
+                return               # we already said which song we could not find
+            self._no_preference_found(text, asked_docs)
             return
 
         asked = self.pending_attr
+        # Songs the user named are the strongest evidence, but anything else they said in the
+        # same message ("like this but faster") wins over the song's own values.
+        if "only_languages" in extracted:
+            # A language filter replaces any single preferred language (from a named song or earlier).
+            seeds.pop("language", None)
+            self.profile.pop("language", None)
+        self.profile.update(seeds)
         self.profile.update(extracted)
-        self.say("Got it: " + _describe(extracted) + ".")
+        for song in liked:
+            # Named songs go to the top of the next list (see _recommend) and count as a 10.
+            if song["id"] not in self.pinned_ids:
+                self.pinned_ids.append(song["id"])
+            self.ratings_history[song["id"]] = max(self.ratings_history.get(song["id"], 0), 10)
+        for song in disliked:
+            self.rated_ids.add(song["id"])
+            self.ratings_history.setdefault(song["id"], 1)
+
+        if liked:
+            self.say("Using " + ", ".join(f'"{s["title"]}"' for s in liked) + " as a reference: " + _describe(seeds) + ".")
+        if extracted:
+            self.say("Got it: " + _describe(extracted) + ".")
+        if extracted.get("only_languages"):
+            self.say("Only songs in " + ", ".join(extracted["only_languages"]) +
+                     " will be shown (instrumentals have no language, so they are left out).")
+        if disliked:
+            self.say("I'll leave out " + ", ".join(f'"{s["title"]}"' for s in disliked) + ".")
         if asked:
-            if asked not in extracted:
+            if asked not in extracted and asked not in seeds:
                 self.skipped.add(asked)
                 self._trace(f"Reply did not answer {asked!r}; skipping it.")
             self._clear_pending()
@@ -488,8 +607,16 @@ class Interview:
         if self._ready():
             self._recommend()
 
-    def _no_preference_found(self, text):
-        """Nothing to extract. It may be a question typed without "?" ("what is tempo")."""
+    def _no_preference_found(self, text, asked_docs=False):
+        """
+        Nothing to extract. It may be a question typed without "?" ("what is tempo"). If the text
+        looked like a question and neither the docs nor the extractor could use it, it is off topic.
+        """
+        if asked_docs:
+            self._trace(f"Off topic (no doc answer, no preference): {text!r}")
+            self.say(NOT_IN_DOCS)
+            self._count_clarification()
+            return
         status, answer = self._ask_docs(text)
         if status == "answer":
             self.say(answer)
@@ -500,8 +627,9 @@ class Interview:
             self._skip_pending("no usable preference in the reply",
                                "I didn't catch a preference there, so let's move on.")
         else:
-            self.say("I didn't catch a preference in that. "
-                     "Try something like 'calm songs for studying'.")
+            self.say("I'm a music recommender, and I didn't catch a music preference in that. You can tell me "
+                     "a mood, an occasion, a genre, a language, or songs you like, for example "
+                     "'calm songs for studying' or 'more like Clair de Lune'. Type 'help' to see everything you can say.")
 
     # -----------------------------------------------------------
     # Commands
@@ -546,6 +674,8 @@ class Interview:
         self.opened = False
         self.last_recommendations = []
         self.rated_ids = set()
+        self.pinned_ids = []
+        self.ratings_history = {}
         self.history = []
         self._trace("Reset.")
         self.say("Okay, starting over.")
@@ -558,10 +688,22 @@ class Interview:
         if not enough_to_recommend(self.profile, minimum=1):
             self.say(NO_TASTE_YET)
             return
-        pool = [song for song in self.songs if song["id"] not in self.rated_ids]
-        self._show_picks(recommend_songs(self.profile, pool, k=self.k))
+        by_id = {song["id"]: song for song in self.songs}
+        pinned = [by_id[i] for i in reversed(self.pinned_ids) if i in by_id]
+        # Songs the user asked for by name come first, scored like any other song. They skip the
+        # filters on purpose: the user asked for them directly.
+        top = []
+        for song in pinned:
+            score, reasons = score_song(self.profile, song)
+            top.append((song, score, "; ".join(reasons)))
+        taken = self.rated_ids | {song["id"] for song in pinned}
+        pool = [song for song in self.songs if song["id"] not in taken]
+        rest = recommend_songs(self.profile, pool, k=max(0, self.k - len(top)))
+        self.rated_ids |= {song["id"] for song in pinned}      # shown once, then known
+        self.pinned_ids = []
+        self._show_picks(top + rest, pinned_ids={song["id"] for song in pinned})
 
-    def _show_picks(self, results):
+    def _show_picks(self, results, pinned_ids=()):
         self.last_recommendations = results
         self._trace("Recommendations: " + "; ".join(
             f"{song.get('title')} ({score:.2f})" for song, score, _ in results))
@@ -574,10 +716,13 @@ class Interview:
         for rank, (song, score, explanation) in enumerate(results, start=1):
             title = song.get("title", "(untitled)")
             artist = song.get("artist", "unknown artist")
-            self.say(f"{rank}. {title} by {artist} (match {score:.0%})")
+            asked_for = " <- the song you asked for" if song.get("id") in pinned_ids else ""
+            self.say(f"{rank}. {title} by {artist} (match {score:.0%}){asked_for}")
             why = _reasons_text(explanation)
             if why:
                 self.say(f"   why: {why}")
+            if song.get("url"):
+                self.say(f"   listen: {song['url']}")
         self.say("Type 'rate' to rate these 1-10 and get a better list, "
                  "tell me more to refine them, or type 'quit'.")
 
@@ -621,13 +766,15 @@ class Interview:
         result = regenerate(
             self.profile, ratings, self.songs, shown_ids=shown, k=self.k,
             exclude_ids=self.rated_ids, comments=comments, llm=self.llm,
-            snippets=snippets, vocab=self.vocab)
+            snippets=snippets, vocab=self.vocab, history=self.ratings_history)
 
         metrics = result["metrics"]
         self.rated_ids |= set(ratings)
+        self.ratings_history.update(ratings)
         self.history.append(metrics)
         self._trace(f"Ratings: {ratings}; metrics: {metrics}")
         self._trace(f"Profile before: {self.profile}")
+        changes = _profile_changes(self.profile, result["profile"])
         self.profile = result["profile"]
         self._trace(f"Profile after:  {self.profile}")
 
@@ -636,6 +783,8 @@ class Interview:
         for note in result["notes"]:
             self._trace(note)
             self.say(note)
+        if changes:
+            self.say("What changed in your profile: " + "; ".join(changes) + ".")
         if not any(key.startswith("target_") for key in self.profile):
             self.say("Your profile has no numeric targets (like energy) yet, so the ratings only "
                      "removed those songs from the list. Tell me about energy or tempo to go further.")
@@ -643,7 +792,7 @@ class Interview:
         return result
 
 
-def main(csv_path="data/songs.csv", docs_folder="docs"):
+def main(csv_path=PROJECT_DIR / "data" / "songs.csv", docs_folder=PROJECT_DIR / "docs"):
     try:
         llm = GeminiClient()
     except RuntimeError as error:   # missing GEMINI_API_KEY

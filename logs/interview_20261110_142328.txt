@@ -1,0 +1,25 @@
+Initial profile: {}
+User: 'Tell me about some preferences I would be interested in'
+RAG answer: You can describe your taste using many preferences in plain words, such as a mood like "happy", an occasion like "studying", a genre like "pop", or an era like "90s music". You only need any two preferences to get recommendations, and you can add more at any time. 
+
+Sources: what_you_can_tell_em.md
+Unknown attributes: ['favorite_mood', 'preferred_occasions', 'target_energy', 'favorite_genre', 'vocals', 'target_valence', 'target_acousticness', 'language', 'preferred_decade', 'target_popularity', 'target_tempo', 'target_danceability', 'target_duration']; asking about 'favorite_mood'
+Retrieved for 'favorite_mood': ['glossary_and_faq.md', 'moods_genres_and_tags.md', 'attributes.md']
+Question: What is your favorite mood for music—would you prefer calm, chill, energetic, happy, intense, nostalgic, relaxed, romantic, sad, or uplifting?
+User: 'what can I tell you'
+Treating as a question: 'what preferences can I tell you about'
+RAG answer: You can describe your taste in plain words using a wide range of preferences, such as a mood like "calm", an occasion like "studying", a genre like "pop", or an era like "90s music". You can also specify attributes like energy, tempo, language, vocals, and whether songs are explicit. Any two preferences are enough to get recommendations, and you can add more at any time.
+
+Sources: what_you_can_tell_me.md
+User: 'happy upbeat songs to sing along to'
+Reference for extraction: ['what_you_can_tell_me.md', 'examples_and_listening.md', 'examples_and_listening.md', 'glossary_and_faq.md', 'moods_genres_and_tags.md', 'attributes.md', 'word-to-number tables', 'song catalog']
+Extracted: {'favorite_mood': 'happy', 'target_energy': 0.7, 'preferred_tags': ['singalong'], 'preferred_occasions': ['singalong'], 'target_valence': 0.75, 'target_tempo': 120.0}
+Profile now: {'favorite_mood': 'happy', 'target_energy': 0.7, 'preferred_tags': ['singalong'], 'preferred_occasions': ['singalong'], 'target_valence': 0.75, 'target_tempo': 120.0}
+Recommendations: [Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover) (0.74); Mas Que Nada (0.70); Get Lucky (0.70); Stardew Valley Overture (0.69); Shape of You (0.68)
+User: 'These are great songs but I want sha la la by rainchy on the top. I also only want songs in english or japanese'
+Reference for extraction: ['what_you_can_tell_me.md', 'examples_and_listening.md', 'what_you_can_tell_me.md', 'word-to-number tables', 'song catalog']
+Extracted: {'only_languages': ['english', 'japanese'], 'liked_songs': ['sha la la by rainchy']}
+Liked songs: ['[Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover)']; disliked: []
+Profile now: {'favorite_mood': 'happy', 'target_energy': 0.85, 'preferred_tags': ['anime', 'nostalgic', 'upbeat'], 'preferred_occasions': ['singalong', 'morning'], 'target_valence': 0.78, 'target_tempo': 180.0, 'favorite_genre': 'pop', 'vocals': 'vocal', 'target_acousticness': 0.2, 'target_danceability': 0.62, 'only_languages': ['english', 'japanese']}
+Recommendations: [Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover) (1.00); Levitating (0.80); Shape of You (0.75); September (0.61); Blinding Lights (0.60)
+User: 'quit'

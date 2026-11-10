@@ -102,7 +102,9 @@ class UserProfile:
         vocals: Optional "vocal" or "instrumental" preference.
         target_duration: Optional desired song length in seconds.
         preferred_occasions: Optional list of wanted occasions (e.g. ["study", "workout"]).
-        language: Optional preferred lyrics language.
+        language: Optional preferred lyrics language (a soft preference).
+        only_languages: Optional list such as ["english", "japanese"]. A hard filter: songs in
+            other languages (and instrumentals, which have none) are removed, not just scored lower.
         allow_explicit: False removes explicit songs; None or True keeps them.
         target_valence: Optional desired positivity, sad (0) to happy (1).
         target_tempo: Optional desired tempo in BPM.
@@ -120,6 +122,7 @@ class UserProfile:
     target_duration: Optional[float] = None
     preferred_occasions: Optional[List[str]] = None   # ["study", "workout"]
     language: Optional[str] = None
+    only_languages: Optional[List[str]] = None
     allow_explicit: Optional[bool] = None
     target_valence: Optional[float] = None            # sad (0) to happy (1)
     target_tempo: Optional[float] = None              # BPM
@@ -141,6 +144,7 @@ class UserProfile:
             "target_duration": self.target_duration,
             "preferred_occasions": self.preferred_occasions,
             "language": self.language,
+            "only_languages": self.only_languages,
             "allow_explicit": self.allow_explicit,
             "target_valence": self.target_valence,
             "target_tempo": self.target_tempo,
@@ -221,15 +225,21 @@ def get_strategy(mode: Union[str, RankingStrategy]) -> RankingStrategy:
 
 
 def is_allowed(song: Dict, user_prefs: Dict) -> bool:
-    """Hard filter: False only when the user turned explicit songs off and the song is explicit.
+    """Hard filters. A song is removed when:
+      - the user turned explicit songs off and the song is explicit, or
+      - the user listed languages they want (only_languages) and the song's language is not one
+        of them. Instrumentals have language "none", so they are removed too.
 
-    `is not False` is deliberate. None (no preference) and True both allow every song,
-    and only an explicit False filters. Both recommend_songs() and Recommender.recommend()
-    call this, so the rule lives in one place.
+    `allow_explicit is not False` is deliberate: None (no preference) and True both allow every
+    song, and only an explicit False filters. Both recommend_songs() and Recommender.recommend()
+    call this, so the rules live in one place.
     """
-    if user_prefs.get("allow_explicit") is not False:
-        return True
-    return str(song.get("explicit", "no")).casefold() != "yes"
+    if user_prefs.get("allow_explicit") is False and str(song.get("explicit", "no")).casefold() == "yes":
+        return False
+    wanted = user_prefs.get("only_languages")
+    if wanted and str(song.get("language", "")).casefold() not in {str(w).casefold() for w in wanted}:
+        return False
+    return True
 
 
 class Recommender:

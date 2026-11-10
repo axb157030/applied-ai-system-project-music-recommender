@@ -45,7 +45,7 @@ The interview never uses RAG to decide the user's preferences. RAG answers the u
 1. **Load** every `.md` file in `docs/`.
 2. **Chunk** by blank line, so each paragraph (one attribute, one label list) is a chunk.
 3. **Index**: an inverted index from each word (lowercased, plural-stemmed, filler words removed) to the chunks that contain it.
-4. **Retrieve**: score chunks by how many query words they contain (a heading match counts extra). A question that matches nothing gets **no chunks**, and the app answers "I do not know based on the docs" without calling Gemini.
+4. **Retrieve**: score chunks by how many query words they contain (a heading match counts extra). A message that starts like a question ("tell me about...", "what can I...") is looked up in the docs even without a "?", and if the docs have nothing it is treated as a statement of taste instead. A question that matches nothing gets **no chunks**, and the app answers "I do not know based on the docs" without calling Gemini.
 5. **Generate**: Gemini gets only the retrieved chunks and the rule "use only these snippets or say you don't know".
 
 Three sources feed the model: the retrieved paragraphs (for questions), the word-to-number table of every attribute (so "acoustic" always becomes 0.8), and the labels that really exist in the catalog (so it cannot invent a mood).
@@ -86,6 +86,12 @@ target = target + 0.5 * sum(weight * (song value - target)) / sum(|weight|)
 
 Songs rated above the round's average pull the target toward them, and songs below it push away. Using the round's own average means there is always a direction when the ratings differ, even if every song was rated low. (An earlier "liked 7+ / disliked 4-" rule had no direction when everything was disliked and failed the simulated-user test.) Equal ratings carry no information, so nothing changes. Labels (mood, genre, occasions) are not changed by ratings.
 
+**Learning labels from the whole history.** The numeric rule cannot change mood, genre, occasions or tags, so `learn_labels` does it from every rating so far. Each label gets a total of (rating - 5.5) over the rated songs that have it. An unknown label is filled in when its total reaches 3 (one 9, or two 8s, so one lukewarm rating teaches nothing). A label the user stated is replaced only when their ratings went against it (its total is negative). Occasions and tags are added, up to 4. The app prints what it learned and which profile values changed, so the effect is visible.
+
+**Songs the user names.** Gemini only spots names (`liked_songs`, `disliked_songs`), and it is told which songs were shown or rated so "the Rainych one" maps to an exact title. `find_song` then matches each name to a catalog row in code (typos allowed). If the title is not in the catalog, `songs_by_artist` falls back to that artist and the user is told. `seed_preferences` turns the matched songs into a profile (most common mood and genre, shared occasions and tags, average numbers). Anything else in the same message ("but slower") overrides the song's values. The named song is treated as already known, so the new list is similar songs, not the same song.
+
+**Languages and requested songs.** "Only English or Japanese" is `only_languages`, a hard filter in `is_allowed` (like the explicit filter): other languages and instrumentals (language "none") are removed, not merely scored lower. A song the user names is scored like any other but placed first in the next list, once; then it counts as known and is not repeated. If the title is not in the catalog, the same artist's song is used and the user is told.
+
 **Comments.** Each comment goes to `extract_preferences` with the song and its rating ("rated it 3/10, comment: too slow, give the preferences they want INSTEAD"). The result is validated, and numeric targets move only halfway toward it because Gemini's numbers vary between runs.
 
 ---
@@ -100,7 +106,7 @@ A simulated user is cheap and repeatable, and it found a real bug (section 5). I
 
 ## 7. Known limits and next steps
 
-- Ratings change only numeric targets, never mood, genre or occasion, which carry most of the score. After several rounds the list can stay mood-bound.
+- Labels are learned only after enough liking, and a label the user stated is kept unless their ratings contradict it, so the first rounds still follow what they said.
 - Gemini's suggested numbers differ between runs even at temperature 0, which is why comments are blended and not trusted.
 - Catalog values (energy, valence...) were estimated by hand, 50 songs only, content-based only (no "people like you" signal).
 - Next steps: embeddings for retrieval, an LLM judge scoring explanations (with human spot checks), learning labels from ratings, a larger catalog.

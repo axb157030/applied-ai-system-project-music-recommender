@@ -53,7 +53,7 @@ STOPWORDS = {
     # topic, so "what does valence mean" should be searched as just "valence".
     "mean", "means", "meaning", "explain", "tell", "give", "show", "about",
     "please", "define", "definition", "exist", "some", "something", "want",
-    "good",
+    "good", "would", "could", "should", "interested", "interest", "kind", "kinds", "may", "might",
 }
 
 

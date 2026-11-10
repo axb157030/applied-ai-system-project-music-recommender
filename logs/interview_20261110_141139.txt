@@ -1,0 +1,24 @@
+Initial profile: {}
+User: 'Hello recommender.  I want songs that have a lot of energy. That makes you feel like you can do anything. That establishes grandeur like you are on a fabulous journey that will lead to grandiose ending for you. I do not know how to describe these preferences. Please also tell me more about those preferences I may have'
+Reference for extraction: ['attributes.md', 'interview_playbook.md', 'moods_genres_and_tags.md', 'word-to-number tables', 'song catalog']
+Extracted: {'target_energy': 0.85, 'preferred_tags': ['epic', 'grand']}
+Profile now: {'target_energy': 0.85, 'preferred_tags': ['epic', 'grand']}
+Recommendations: Symphony No. 9 in E Minor, Op. 95, B. 178 "From the New World": IV. Allegro con fuoco (0.77); Strobe (0.70); [Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover) (0.57); Uptown Funk (0.57); September (0.57)
+Ratings: {20: 9, 44: 5, 11: 10, 31: 2, 50: 7}; metrics: {'count': 5, 'mean': 6.6, 'hit_rate': 0.6, 'liked': [20, 11, 50], 'disliked': [31]}
+Profile before: {'target_energy': 0.85, 'preferred_tags': ['epic', 'grand']}
+Profile after:  {'target_energy': 0.857, 'preferred_tags': ['epic', 'grand', 'anime', 'nostalgic'], 'favorite_genre': 'pop', 'favorite_mood': 'intense', 'language': 'japanese', 'preferred_occasions': ['morning', 'singalong', 'dramatic listening', 'focus']}
+Could not read the comment "Perfect song" (Gemini unavailable).
+Learned from your ratings: favorite genre = pop.
+Learned from your ratings: favorite mood = intense.
+Learned from your ratings: language = japanese.
+Learned from your ratings: added preferred occasions morning, singalong, dramatic listening, focus.
+Learned from your ratings: added preferred tags anime, nostalgic.
+Recommendations: Gurenge (0.49); Levitating (0.45); Blinding Lights (0.45); Shape of You (0.42); Megalovania (0.41)
+User: 'These are great songs but I want sha la la by rainchy on the top. I also only want songs in english or japanese'
+Reference for extraction: ['examples_and_listening.md', 'attributes.md', 'examples_and_listening.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'These are great songs but I want sha la la by rainchy on the top. I also only want songs in english or japanese'
+User: 'Tell me about some preferences I would be interested in'
+Reference for extraction: ['word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'Tell me about some preferences I would be interested in'

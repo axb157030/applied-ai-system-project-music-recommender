@@ -8,6 +8,7 @@ Ratings are keyed by SONG ID ({7: 9, 16: 2, ...}), because titles are not always
     validate_ratings   rejects bad ratings (0, 11, "ten", True, unknown song, unrated songs)
     compute_metrics    mean rating, hit rate (share rated 7+), liked / disliked song ids
     update_profile     moves numeric targets toward the best-rated songs and away from the worst
+    learn_labels       learns mood, genre, occasions and tags from ALL ratings so far
     apply_comments     turns comments like "too slow" into profile changes (uses Gemini, checked)
     regenerate         runs all of the above and returns a fresh top-k of unseen songs
 
@@ -31,6 +32,9 @@ MAX_RATING = 10
 LIKE_AT_LEAST = 7       # rated 7 or more = the user liked it (counts toward hit rate)
 DISLIKE_AT_MOST = 4     # rated 4 or less = the user disliked it
 COMMENT_WEIGHT = 0.5    # a comment moves a numeric target this far toward what Gemini suggests
+NEUTRAL = 5.5           # a rating above this counts as "for" a song's labels, below as "against"
+LABEL_MIN_SCORE = 3.0   # how much liking a label needs before it is learned (one 9 = 3.5, one 8 = 2.5)
+MAX_LEARNED_TAGS = 4    # most occasions / tags the profile keeps
 STEP = 0.5              # how far a target moves toward what the user rated best (0 = never, 1 = all the way)
 
 
@@ -159,6 +163,79 @@ def update_profile(profile, ratings, songs):
 
 
 # ---------------------------------------------------------------------------
+# Learning labels from the whole rating history
+# ---------------------------------------------------------------------------
+
+# profile key -> song column (single label) and profile key -> song column (several labels, "a|b")
+LABEL_COLUMNS = {"favorite_genre": "genre", "favorite_mood": "mood", "language": "language"}
+LIST_COLUMNS = {"preferred_occasions": "occasion_tags", "preferred_tags": "mood_tags"}
+
+
+def _label_scores(history, songs_by_id, column, split):
+    """{label: sum of (rating - NEUTRAL) over the rated songs that have it}."""
+    scores = {}
+    for song_id, rating in history.items():
+        song = songs_by_id.get(song_id)
+        if not song:
+            continue
+        raw = str(song.get(column, ""))
+        for label in (raw.split("|") if split else [raw]):
+            label = label.strip().lower()
+            if label and label != "none":
+                scores[label] = scores.get(label, 0.0) + (rating - NEUTRAL)
+    return scores
+
+
+def learn_labels(profile, history, songs):
+    """
+    Learn mood, genre, language, occasions and tags from EVERY rating so far (the history),
+    because the numeric update in update_profile cannot change labels.
+
+        single label (mood, genre, language):
+            unknown      -> use the best-liked label, if liked enough
+            already set  -> replace it only when the user's ratings went against it
+                            (its total is negative) and another label is liked enough
+        lists (occasions, tags): add the best-liked labels (up to MAX_LEARNED_TAGS)
+
+    A label's total is the sum of (rating - 5.5) over the rated songs that have it, so
+    many songs rated high add up and one low rating can cancel a high one.
+
+    Returns (new_profile, notes). The input is not modified.
+    """
+    songs_by_id = {song["id"]: song for song in songs}
+    new_profile = dict(profile)
+    notes = []
+
+    for key, column in LABEL_COLUMNS.items():
+        if key == "language" and new_profile.get("only_languages"):
+            continue                       # the user already fixed the languages
+        scores = _label_scores(history, songs_by_id, column, split=False)
+        if not scores:
+            continue
+        best = max(scores, key=scores.get)
+        if scores[best] < LABEL_MIN_SCORE:
+            continue
+        current = new_profile.get(key)
+        if current is None:
+            new_profile[key] = best
+            notes.append(f"Learned from your ratings: {key.replace('_', ' ')} = {best}.")
+        elif current != best and scores.get(str(current).lower(), 0.0) < 0:
+            new_profile[key] = best
+            notes.append(f"Your ratings went against {current}, so {key.replace('_', ' ')} is now {best}.")
+
+    for key, column in LIST_COLUMNS.items():
+        scores = _label_scores(history, songs_by_id, column, split=True)
+        liked = [label for label, total in sorted(scores.items(), key=lambda item: -item[1])
+                 if total >= LABEL_MIN_SCORE]
+        current = list(new_profile.get(key) or [])
+        added = [label for label in liked if label not in current][:max(0, MAX_LEARNED_TAGS - len(current))]
+        if added:
+            new_profile[key] = current + added
+            notes.append(f"Learned from your ratings: added {key.replace('_', ' ')} {', '.join(added)}.")
+    return new_profile, notes
+
+
+# ---------------------------------------------------------------------------
 # Comments (the one place Gemini helps)
 # ---------------------------------------------------------------------------
 
@@ -234,13 +311,15 @@ def apply_comments(profile, comments, songs, llm=None, snippets=None, vocab=None
 # ---------------------------------------------------------------------------
 
 def regenerate(profile, ratings, songs, shown_ids=None, k=5, exclude_ids=(),
-               comments=None, llm=None, snippets=None, vocab=None):
+               comments=None, llm=None, snippets=None, vocab=None, history=None):
     """
     Validate the ratings, measure the round, improve the profile, and recommend again.
 
     exclude_ids: songs from earlier rounds. Together with the songs just rated they are left
                  out, so the new list is new music.
     comments:    optional {song_id: text}. Used only when llm is given (see apply_comments).
+    history:     optional {song_id: rating} from EARLIER rounds. Labels are learned from the
+                 history plus this round (see learn_labels).
     Raises ValueError if the ratings are not valid (see validate_ratings).
 
     Returns {"metrics", "headline", "profile", "notes", "recommendations"}.
@@ -251,6 +330,8 @@ def regenerate(profile, ratings, songs, shown_ids=None, k=5, exclude_ids=(),
     notes = []
     if comments and llm is not None:                            # words: Gemini, then checked
         new_profile, notes = apply_comments(new_profile, comments, songs, llm, snippets, vocab, ratings)
+    new_profile, learned = learn_labels(new_profile, {**(history or {}), **ratings}, songs)
+    notes += learned                                            # labels: code, from all ratings
     seen = set(ratings) | set(exclude_ids)
     unseen = [song for song in songs if song["id"] not in seen]
     return {

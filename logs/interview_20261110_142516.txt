@@ -1,0 +1,13 @@
+Initial profile: {}
+User: 'calm acoustic songs for studying'
+Reference for extraction: ['interview_playbook.md', 'what_you_can_tell_me.md', 'glossary_and_faq.md', 'word-to-number tables', 'song catalog']
+Extracted: {'favorite_mood': 'calm', 'target_acousticness': 0.8, 'preferred_occasions': ['study']}
+Profile now: {'favorite_mood': 'calm', 'target_acousticness': 0.8, 'preferred_occasions': ['study']}
+Recommendations: Deltarune - Beginning/A Town Called Hometown (Orchestral Arrangement) (1.00); Undertale - Ruins (Orchestral Remix) (1.00); One Summer's Day (0.99); Cornfield Chase (0.97); Sweden (0.96)
+Ratings: {13: 9, 14: 9, 19: 9, 45: 3, 16: 3}; metrics: {'count': 5, 'mean': 6.6, 'hit_rate': 0.6, 'liked': [13, 14, 19], 'disliked': [45, 16]}
+Profile before: {'favorite_mood': 'calm', 'target_acousticness': 0.8, 'preferred_occasions': ['study']}
+Profile after:  {'favorite_mood': 'calm', 'target_acousticness': 0.83, 'preferred_occasions': ['study', 'relax', 'travel'], 'favorite_genre': 'orchestral', 'preferred_tags': ['game', 'nostalgic', 'warm', 'mysterious']}
+Learned from your ratings: favorite genre = orchestral.
+Learned from your ratings: added preferred occasions relax, travel.
+Learned from your ratings: added preferred tags game, nostalgic, warm, mysterious.
+Recommendations: Undertale - Once Upon A Time (Orchestral Cover) (0.90); Comptine d'un autre ete (0.47); Clair de Lune (0.47); Weightless (0.40); Gymnopedie No. 1 (0.19)

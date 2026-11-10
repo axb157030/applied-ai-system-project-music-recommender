@@ -1,0 +1,107 @@
+Initial profile: {}
+User: 'I want music that is very spiritual. That makes you feel you are on a fabulous journey. That things will be better and that we are amazing. Please tell me what are these preferences'
+Reference for extraction: ['what_you_can_tell_me.md', 'moods_genres_and_tags.md', 'glossary_and_faq.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'I want music that is very spiritual. That makes you feel you are on a fabulous journey. That things will be better and that we are amazing. Please tell me what are these preferences'
+Unknown attributes: ['favorite_mood', 'preferred_occasions', 'target_energy', 'favorite_genre', 'vocals', 'target_valence', 'target_acousticness', 'language', 'preferred_decade', 'target_popularity', 'target_tempo', 'target_danceability', 'target_duration']; asking about 'favorite_mood'
+Retrieved for 'favorite_mood': ['glossary_and_faq.md', 'moods_genres_and_tags.md', 'attributes.md']
+Question: What is the single main feeling you want from a song, choosing strictly from calm, chill, energetic, happy, intense, nostalgic, relaxed, romantic, sad, or uplifting?
+User: 'Tell me such preferences'
+RAG answer: You can describe your taste in plain words using various preferences like moods, genres, eras, or whether music is acoustic or electronic. For acousticness, you can use terms like "electronic" or "acoustic," where a song with high acousticness like *Hallelujah* by Jeff Buckley scores 0.70. You only need any two preferences to get recommendations, and you can change them by hand anytime in the profile tab.
+
+Files relied on: glossary_and_faq.md, what_you_can_tell_me.md, attributes.md
+User: 'I do not know them'
+Reference for extraction: ['interview_playbook.md', 'glossary_and_faq.md', 'moods_genres_and_tags.md', 'moods_genres_and_tags.md', 'attributes.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+RAG answer: Do not worry about not knowing! Let's try picking one of these three concrete choices with examples from the catalog: quiet like Clair de Lune, medium like Dreams by Fleetwood Mac, or loud like Smells Like Teen Spirit? Please pick one.
+
+Files relied on: interview_playbook.md
+User: 'Again what are te preferences for songs that evoke a sense of grandeur'
+Reference for extraction: ['what_you_can_tell_me.md', 'examples_and_listening.md', 'examples_and_listening.md', 'glossary_and_faq.md', 'moods_genres_and_tags.md', 'attributes.md', 'word-to-number tables', 'song catalog']
+Extracted: {'preferred_tags': ['grand']}
+Reply did not answer 'favorite_mood'; skipping it.
+Profile now: {'preferred_tags': ['grand']}
+Unknown attributes: ['preferred_occasions', 'target_energy', 'favorite_genre', 'vocals', 'target_valence', 'target_acousticness', 'language', 'preferred_decade', 'target_popularity', 'target_tempo', 'target_danceability', 'target_duration']; asking about 'preferred_occasions'
+Retrieved for 'preferred_occasions': ['moods_genres_and_tags.md', 'glossary_and_faq.md', 'how_it_works.md']
+Question: What situations or activities are you looking for music for, such as cooking, focus, workout, or relaxing?
+User: 'working. That you should be a giving person and that will lead to greatness. Doing good'
+Reference for extraction: ['examples_and_listening.md', 'what_you_can_tell_me.md', 'glossary_and_faq.md', 'moods_genres_and_tags.md', 'glossary_and_faq.md', 'how_it_works.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'working. That you should be a giving person and that will lead to greatness. Doing good'
+Skipping 'preferred_occasions': no usable preference in the reply
+Unknown attributes: ['target_energy', 'favorite_genre', 'vocals', 'target_valence', 'target_acousticness', 'language', 'preferred_decade', 'target_popularity', 'target_tempo', 'target_danceability', 'target_duration']; asking about 'target_energy'
+Retrieved for 'target_energy': ['attributes.md', 'examples_and_listening.md', 'attributes.md']
+Question: Do you prefer low energy (quiet, slow, and gentle, like *Weightless* by Marconi Union), medium energy (like *Dreams* by Fleetwood Mac), or high energy (loud, fast, and driving, like *Blinding Lights* by The Weeknd)?
+User: 'the situation is working'
+Reference for extraction: ['examples_and_listening.md', 'interview_playbook.md', 'moods_genres_and_tags.md', 'attributes.md', 'examples_and_listening.md', 'attributes.md', 'word-to-number tables', 'song catalog']
+Extracted: {'preferred_occasions': ['workout']}
+Reply did not answer 'target_energy'; skipping it.
+Profile now: {'preferred_tags': ['grand'], 'preferred_occasions': ['workout']}
+Recommendations: Symphony No. 9 in E Minor, Op. 95, B. 178 "From the New World": IV. Allegro con fuoco (0.60); Blinding Lights (0.40); Levitating (0.40); Smells Like Teen Spirit (0.40); Lose Yourself (0.40)
+Ratings: {20: 9, 1: 3, 2: 4, 4: 8, 5: 6}; metrics: {'count': 5, 'mean': 6.0, 'hit_rate': 0.4, 'liked': [20, 4], 'disliked': [1, 2]}
+Profile before: {'preferred_tags': ['grand'], 'preferred_occasions': ['workout']}
+Profile after:  {'preferred_tags': ['grand', 'powerful', 'dramatic'], 'preferred_occasions': ['workout', 'focus', 'dramatic listening'], 'favorite_genre': 'classical', 'favorite_mood': 'intense'}
+Learned from your ratings: favorite genre = classical.
+Learned from your ratings: favorite mood = intense.
+Learned from your ratings: added preferred occasions focus, dramatic listening.
+Learned from your ratings: added preferred tags powerful, dramatic.
+Recommendations: UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat] (0.43); Spring (The Four Seasons) (0.43); Bohemian Rhapsody (0.39); Clair de Lune (0.39); Gymnopedie No. 1 (0.39)
+User: 'Yes undertale -core is great. I am also interested in songs from rainchy'
+Reference for extraction: ['examples_and_listening.md', 'what_you_can_tell_me.md', 'attributes.md', 'word-to-number tables', 'song catalog']
+Extracted: {'liked_songs': ['UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat]']}
+Liked songs: ['UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat]']; disliked: []
+Profile now: {'preferred_tags': ['game', 'electronic', 'powerful'], 'preferred_occasions': ['workout', 'gaming'], 'favorite_genre': 'electro', 'favorite_mood': 'intense', 'vocals': 'instrumental', 'target_energy': 0.91, 'target_valence': 0.6, 'target_acousticness': 0.02, 'target_danceability': 0.78, 'target_tempo': 128.0}
+Recommendations: UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat] (1.00); Megalovania (0.69); Strobe (0.63); Sunset Lover (0.57); SICKO MODE (0.55)
+Ratings: {15: 10, 35: 9, 44: 2, 9: 6, 39: 2}; metrics: {'count': 5, 'mean': 5.8, 'hit_rate': 0.4, 'liked': [15, 35], 'disliked': [44, 39]}
+Profile before: {'preferred_tags': ['game', 'electronic', 'powerful'], 'preferred_occasions': ['workout', 'gaming'], 'favorite_genre': 'electro', 'favorite_mood': 'intense', 'vocals': 'instrumental', 'target_energy': 0.91, 'target_valence': 0.6, 'target_acousticness': 0.02, 'target_danceability': 0.78, 'target_tempo': 128.0}
+Profile after:  {'preferred_tags': ['game', 'electronic', 'powerful', 'dramatic'], 'preferred_occasions': ['workout', 'gaming', 'dramatic listening'], 'favorite_genre': 'electro', 'favorite_mood': 'intense', 'vocals': 'instrumental', 'target_energy': 0.953, 'target_valence': 0.659, 'target_acousticness': 0.029, 'target_danceability': 0.771, 'target_tempo': 123.539}
+Learned from your ratings: added preferred occasions dramatic listening.
+Learned from your ratings: added preferred tags dramatic.
+Recommendations: Master of Puppets (0.49); Gurenge (0.43); Bohemian Rhapsody (0.43); Stardew Valley Overture (0.38); Uptown Funk (0.37)
+User: 'No the previous songs were much better. Please songs from rainchy at the top and also the meglovenia song and undertale core song'
+Reference for extraction: ['moods_genres_and_tags.md', 'glossary_and_faq.md', 'what_you_can_tell_me.md', 'word-to-number tables', 'song catalog']
+Extracted: {'liked_songs': ['Megalovania', 'UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat]']}
+Liked songs: ['Megalovania', 'UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat]']; disliked: []
+Profile now: {'preferred_tags': ['game', 'boss fight', 'driving'], 'preferred_occasions': ['gaming', 'workout'], 'favorite_genre': 'soundtrack', 'favorite_mood': 'intense', 'vocals': 'instrumental', 'target_energy': 0.895, 'target_valence': 0.525, 'target_acousticness': 0.035, 'target_danceability': 0.665, 'target_tempo': 124.0}
+Recommendations: UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat] (0.71); Megalovania (0.98); Stardew Valley Overture (0.61); Master of Puppets (0.52); Cornfield Chase (0.48)
+User: 'But please also include the song by rainchy please!!'
+Reference for extraction: ['what_you_can_tell_me.md', 'examples_and_listening.md', 'examples_and_listening.md', 'word-to-number tables', 'song catalog']
+Gemini failed extracting preferences: Gemini call failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+User: 'Now can you reach Gemini. But please also include the song by rainchy please!!'
+Reference for extraction: ['glossary_and_faq.md', 'what_you_can_tell_me.md', 'examples_and_listening.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+Docs have no answer for 'Now can you reach Gemini. But please also include the song by rainchy please!!'
+User: 'Include the same songs essentially but also add the song from rainchy'
+Reference for extraction: ['what_you_can_tell_me.md', 'glossary_and_faq.md', 'attributes.md', 'word-to-number tables', 'song catalog']
+Extracted: {'liked_songs': ['Symphony No. 9 in E Minor, Op. 95, B. 178 "From the New World": IV. Allegro con fuoco', 'Smells Like Teen Spirit', 'UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat]', 'Megalovania'], 'disliked_songs': ['Blinding Lights', 'Levitating', 'Strobe', 'SICKO MODE']}
+Liked songs: ['Symphony No. 9 in E Minor, Op. 95, B. 178 "From the New World": IV. Allegro con fuoco', 'Smells Like Teen Spirit', 'UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat]', 'Megalovania']; disliked: ['Blinding Lights', 'Levitating', 'Strobe', 'SICKO MODE']
+Profile now: {'preferred_tags': ['powerful', 'game', 'dramatic'], 'preferred_occasions': ['workout', 'gaming', 'focus'], 'favorite_genre': 'classical', 'favorite_mood': 'intense', 'vocals': 'instrumental', 'target_energy': 0.88, 'target_valence': 0.617, 'target_acousticness': 0.255, 'target_danceability': 0.532, 'target_tempo': 124.25, 'language': 'english'}
+Recommendations: Megalovania (0.64); UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat] (0.65); Smells Like Teen Spirit (0.58); Symphony No. 9 in E Minor, Op. 95, B. 178 "From the New World": IV. Allegro con fuoco (0.79); Spring (The Four Seasons) (0.55)
+User: 'this hatorka whatever song by rainchy include that'
+Reference for extraction: ['examples_and_listening.md', 'examples_and_listening.md', 'glossary_and_faq.md', 'word-to-number tables', 'song catalog']
+Extracted: {'liked_songs': ['Hotaru no Hikari by Rainych Ran']}
+Liked songs: ['[Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover)']; disliked: []
+Profile now: {'preferred_tags': ['anime', 'nostalgic', 'upbeat'], 'preferred_occasions': ['singalong', 'morning'], 'favorite_genre': 'pop', 'favorite_mood': 'happy', 'vocals': 'vocal', 'target_energy': 0.85, 'target_valence': 0.78, 'target_acousticness': 0.2, 'target_danceability': 0.62, 'target_tempo': 180.0, 'language': 'japanese'}
+Recommendations: [Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover) (1.00); Shape of You (0.70); Gurenge (0.60); September (0.57); Three Little Birds (0.56)
+User: 'yes grate songs but I also I like songs like the undertale core song'
+Reference for extraction: ['what_you_can_tell_me.md', 'moods_genres_and_tags.md', 'examples_and_listening.md', 'word-to-number tables', 'song catalog']
+Extracted: {'liked_songs': ['UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat]']}
+Liked songs: ['UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat]']; disliked: []
+Profile now: {'preferred_tags': ['game', 'electronic', 'powerful'], 'preferred_occasions': ['workout', 'gaming'], 'favorite_genre': 'electro', 'favorite_mood': 'intense', 'vocals': 'instrumental', 'target_energy': 0.91, 'target_valence': 0.6, 'target_acousticness': 0.02, 'target_danceability': 0.78, 'target_tempo': 128.0, 'language': 'japanese'}
+Recommendations: UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat] (0.94); Gurenge (0.49); Master of Puppets (0.48); Bohemian Rhapsody (0.39); Stardew Valley Overture (0.37)
+User: 'rainchy song that is my favorite song and core is the second favorite'
+Reference for extraction: ['examples_and_listening.md', 'examples_and_listening.md', 'examples_and_listening.md', 'word-to-number tables', 'song catalog']
+Extracted: {'liked_songs': ['[Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover)', 'UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat]']}
+Liked songs: ['[Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover)', 'UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat]']; disliked: []
+Profile now: {'preferred_tags': ['anime', 'nostalgic', 'upbeat'], 'preferred_occasions': ['singalong', 'morning', 'workout'], 'favorite_genre': 'pop', 'favorite_mood': 'happy', 'vocals': 'instrumental', 'target_energy': 0.88, 'target_valence': 0.69, 'target_acousticness': 0.11, 'target_danceability': 0.7, 'target_tempo': 154.0, 'language': 'japanese'}
+Recommendations: UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat] (0.41); [Rainych] Hotaru no Hikari - Ikimono Gakari [Naruto Shippuden OP 5] (cover) (0.89); Shape of You (0.67); Gurenge (0.59); September (0.52)
+User: 'Great. Now tell me what is acousticness, energy, and other song attributes'
+Reference for extraction: ['glossary_and_faq.md', 'attributes.md', 'attributes.md', 'word-to-number tables', 'song catalog']
+Extracted: {}
+RAG answer: Energy measures how intense and active a song feels on a scale from 0 to 1, ranging from quiet songs like *Weightless* by Marconi Union (0.10) to loud, driving tracks like *Smells Like Teen Spirit* by Nirvana (0.91). Acousticness measures whether a song uses real instruments versus electronic sounds, scoring from 0 (fully electronic, like *Blinding Lights* by The Weeknd at 0.00) to 1 (fully acoustic, like *Moonlight Sonata* by Ludwig van Beethoven at 0.99). Please note that these attribute numbers are not exact measurements, but were estimated by hand as close guides for the project. 
+
+Files relied on: glossary_and_faq.md, attributes.md
+User: 'Tell me about various genres and makes them different from each other'
+RAG answer: Various music genres each have their own distinct style, and our app recognizes many of them with specific example songs provided in the reference documents. For instance, Pop is represented by "Shape of You" by Ed Sheeran, Rock by "Dreams" by Fleetwood Mac, and Hip hop by "Lose Yourself" by Eminem. Other examples include Jazz ("Take Five" by Dave Brubeck Quartet), Classical ("Clair de Lune" by Claude Debussy), and Metal ("Master of Puppets" by Metallica). 
+
+Files relied on: examples_and_listening.md
