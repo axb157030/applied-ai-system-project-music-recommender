@@ -31,6 +31,13 @@ Every decision is written to logs/interview_<time>.txt (the "reasoning trace").
 
 The console (python -m src.main) and the Streamlit app (app.py) both drive this same
 class: they call respond(text) for each message and prompt() for the next question.
+
+Before routing a turn, respond() checks the user's text with check_input().
+This input-only guardrail blocks specific safety/privacy patterns; it does not
+inspect Gemini output. _handle() then routes the allowed text. If a question
+cannot be answered and yields no usable preference, _no_preference_found()
+either explains that it is off topic or, when an interview attribute is pending,
+moves the interview along.
 """
 
 import os
@@ -270,9 +277,9 @@ class Interview:
         self.max_questions = max_questions
 
         self.skipped = set()          # attributes the user could not or would not answer
-        self.pending_attr = None      # attribute currently being asked about
-        self.pending_question = None  # the text of that question (re-asked after side questions)
-        self.clarifications = 0       # side questions asked while pending_attr is open
+        self.pending_attr = None      # preference being asked for (e.g. "favorite_mood"); not conversation state
+        self.pending_question = None  # generated prompt for that preference, repeated after side questions
+        self.clarifications = 0       # side questions asked while an attribute is awaiting an answer
         self.questions_asked = 0
         self.opened = False           # has the user answered the opening question yet?
         self.gave_up = False          # stopped asking before we had enough preferences
@@ -321,6 +328,7 @@ class Interview:
         text = text.strip()
         if not text:
             return None
+        # This checks user input only; model output is validated separately.
         verdict = check_input(text)
         if not verdict.allowed:
             # Log which rule fired, never the text itself (it may hold personal data).
@@ -477,7 +485,7 @@ class Interview:
         self._count_clarification()
 
     def _answer_or_take_preferences(self, text):
-        """Question-like text without "?": try the docs first, and if they have nothing, treat it as taste."""
+        """For question-like text without "?": try docs first, then extract a preference if refused."""
         status, answer = self._ask_docs(text)
         if status == "answer":
             self.say(answer)
@@ -491,6 +499,7 @@ class Interview:
         """A pending question gets MAX_CLARIFICATIONS side questions, then we move on."""
         if self.pending_attr is None:
             return
+        # E.g. "what is energy?" is answered without clearing a pending favorite_mood question.
         self.clarifications += 1
         if self.clarifications >= MAX_CLARIFICATIONS:
             self._skip_pending("too many side questions", "Let's move on to something else.")
@@ -568,6 +577,7 @@ class Interview:
         if not extracted and not seeds and not disliked:
             if messages or avoid_messages:
                 return               # we already said which song we could not find
+            # Nothing usable was extracted; distinguish an unanswered question from a missed reply.
             self._no_preference_found(text, asked_docs)
             return
 
@@ -599,6 +609,7 @@ class Interview:
         if disliked:
             self.say("I'll leave out " + ", ".join(f'"{s["title"]}"' for s in disliked) + ".")
         if asked:
+            # If asked was favorite_mood but the reply only supplied a genre, mark mood unanswered.
             if asked not in extracted and asked not in seeds:
                 self.skipped.add(asked)
                 self._trace(f"Reply did not answer {asked!r}; skipping it.")
@@ -609,8 +620,8 @@ class Interview:
 
     def _no_preference_found(self, text, asked_docs=False):
         """
-        Nothing to extract. It may be a question typed without "?" ("what is tempo"). If the text
-        looked like a question and neither the docs nor the extractor could use it, it is off topic.
+        No preference was extracted. If docs were already tried and refused, report off topic.
+        Otherwise try docs; if the user was answering a pending attribute, skip it on no result.
         """
         if asked_docs:
             self._trace(f"Off topic (no doc answer, no preference): {text!r}")
@@ -624,6 +635,7 @@ class Interview:
         elif status == "error":
             self.say(GEMINI_DOWN)
         elif self.pending_attr:
+            # E.g. "banana" while favorite_mood is pending: skip that question and continue.
             self._skip_pending("no usable preference in the reply",
                                "I didn't catch a preference there, so let's move on.")
         else:
