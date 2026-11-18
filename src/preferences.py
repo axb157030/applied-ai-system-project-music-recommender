@@ -6,6 +6,23 @@ reach the recommender. This file does not call Gemini, so it is fully testable o
 Field names match UserProfile in recommender.py.
 """
 
+"""
+LEARNING NOTES: preferences.py is the "customs officer" between the LLM and your logic.
+
+  - LLMs return text that is USUALLY right. Code that depends on "usually" breaks.
+    So clean_preferences() accepts a key only if its type, range and label are valid,
+    and silently DROPS the rest. Missing key therefore always means "unknown".
+  - build_vocab() collects the labels that really exist in the song data, so the LLM
+    cannot invent a mood no song has ("whimsical-core" would match nothing).
+  - find_song() does fuzzy matching with difflib in plain code: the LLM only extracts
+    what the user typed ("hotaru no hikari"); CODE decides which real song that is.
+    Rule of thumb: LLM for language understanding, code for facts and decisions.
+  - seed_preferences() turns "songs like X" into a profile by averaging X's numbers
+    and taking its most common labels (Counter.most_common).
+  - enough_to_recommend() / unknown_attributes() are the interview's progress meter:
+    how many tastes do we know, and what should we ask about next (ASK_ORDER)?
+"""
+
 import json
 import re
 from collections import Counter
@@ -151,19 +168,36 @@ def find_song(mention, songs, cutoff=0.6):
     Match free text such as "Hotaru no Hikari by rainychy" to one catalog song, or None.
 
     Done in code, not by Gemini, so the answer is always a real catalog song. Each song is
-    scored by how much of the text its title and artist account for, tolerating typos.
+    scored mainly by how well its TITLE matches the text (typos tolerated). A matching ARTIST
+    word only adds a small bonus (+0.15) and cannot select a song by itself. Returns the single
+    best song, or None if its score is below `cutoff`.
     """
+    # HOW THIS DIFFERS FROM recommend_songs AND songs_by_artist
+    #   - It needs no profile and uses no song features (energy, mood...). It only compares
+    #     TEXT: what the user typed vs. each song's title (and artist, as a small bonus).
+    #   - It returns ONE song (the single best score), never a list. Use songs_by_artist
+    #     when you want all songs of an artist.
+    #   - It is a "best guess" search, not "any shared word": the TITLE drives the score and
+    #     the ARTIST only adds +0.15, so an artist name alone can never pass the cutoff.
+    #   - Pattern worth remembering: score every candidate, keep the max, and return None
+    #     if even the max is below a cutoff. "No good match" must be a possible answer.
     text = _words(mention)
     if not text:
         return None
     best, best_score = None, 0.0
     for song in songs:
         title, artist = _words(song.get("title", "")), _words(song.get("artist", ""))
+        # Score 1: the whole title appears inside the typed text -> perfect (1.0).
+        # Otherwise SequenceMatcher.ratio() gives 0..1 for how alike the two strings are
+        # (character-level), which is what tolerates typos like "Hotaru no Hikari" misspelled.
         title_score = 1.0 if title and title in text else SequenceMatcher(None, text, title).ratio()
         # Typed titles are often shorter than the catalog's ("Hotaru no Hikari" vs a long title with tags).
+        # Score 2: every typed word is a word of the title -> at least 0.9 (needs 2+ words so
+        # a single common word like "love" cannot claim a long title).
         words = text.split()
         if len(words) >= 2 and all(w in title.split() for w in words):
             title_score = max(title_score, 0.9)
+        # Score 3 (bonus): any typed word looks like an artist word (typos ok, ratio >= 0.8).
         artist_score = max((SequenceMatcher(None, w, a).ratio() for w in words for a in artist.split()), default=0)
         score = title_score + (0.15 if artist_score >= 0.8 else 0)
         if score > best_score:
@@ -177,6 +211,12 @@ def songs_by_artist(mention, songs, cutoff=0.8):
     is not in the catalog but the artist is: "Sha La La by Rainychy" -> the Rainych songs.
     Only words of 4+ letters count, so "the" or "by" never match an artist.
     """
+    # Unlike find_song this returns EVERY matching song (a list), not the single best one.
+    # A song matches if ANY typed word (4+ letters, to skip filler like "by"/"the") is
+    # similar (ratio >= 0.8, so small typos pass) to ANY word of that song's artist.
+    # Only the artist is checked, never the title. Trade-off: the filter is loose, so a
+    # typed word that resembles an artist's name by accident also matches. Callers limit
+    # the damage (interview.py uses only the first 2 songs and tells the user).
     words = [w for w in _words(mention).split() if len(w) >= 4]
     found = []
     for song in songs:

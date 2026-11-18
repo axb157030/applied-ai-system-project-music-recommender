@@ -34,6 +34,14 @@ RAG mode continues to step 6 so Gemini can write a readable answer.
 
 # Thank you https://github.com/codepath/ai110-module4tinker-docubot-solution/blob/main/docubot.py
 
+# LEARNING NOTES: retriever.py is a tiny search engine, no AI needed for the "R" in RAG.
+#   chunk = a paragraph; index = {word: {chunk ids}} (like a textbook's back-of-book index);
+#   retrieve = count how many question words each chunk contains, take the best few.
+#   The guardrail returns [] when the match is weak, and answer_rag then skips the LLM
+#   entirely: "I do not know" is cheaper and safer than a made-up answer.
+#   Real systems swap the word counting for embeddings (meaning-based similarity), but
+#   the pipeline load -> chunk -> index -> retrieve -> generate stays the same.
+
 import os
 import glob
 import re
