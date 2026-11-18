@@ -331,6 +331,7 @@ class Interview:
         self.opened = True
         return self._handle(text)
 
+    
     def _converse(self):
         self.say(GREETING)
         while True:
