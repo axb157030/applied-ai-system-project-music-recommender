@@ -105,6 +105,14 @@ def clean_preferences(raw, vocab=None):
         if key in STRING_KEYS:
             if isinstance(value, str) and value.strip():
                 label = value.strip().lower()
+                # Accept the label if ANY of these is true (`or` stops at the first True):
+                #   vocab is None      -> caller gave no allowed-list, so do not check
+                #   key not in vocab   -> no allowed-list for this key (e.g. "language"), so
+                #                         any non-empty string is accepted
+                #   label in vocab[key]-> the label really exists in the catalog
+                # It is REJECTED only when an allowed-list exists for this key and the
+                # A label is rejected only when the key does have a set and the label isn't in it.
+                # label is not on it (e.g. favorite_genre "whimsical-core").
                 if vocab is None or key not in vocab or label in vocab[key]:
                     prefs[key] = label
 

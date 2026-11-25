@@ -33,6 +33,36 @@ The console (python -m src.main) and the Streamlit app (app.py) both drive this 
 class: they call respond(text) for each message and prompt() for the next question.
 """
 
+# LEARNING GLOSSARY (words that help when reading this file)
+#
+# PLAIN PICTURE: a new employee with a handbook. The customer says something. The employee
+# does not guess: they flip through the handbook (docs/ -> retriever), check the product list
+# (songs.csv -> vocab), fill in an order form (the preferences dict), a manager checks the
+# form (clean_preferences), and a calculator picks the products (recommend_songs).
+#
+#   router         ordered if/elif checks, cheap exact rules first, the LLM last (_handle).
+#   cold start     no profile yet, so the bot must interview before it can recommend.
+#   RAG            retrieve relevant doc paragraphs first, then let the LLM answer from them.
+#   snippets       the doc paragraphs the retriever found. In a QUESTION they are the answer's
+#                  source. In a PREFERENCE message they are only reference for Gemini (what terms
+#                  mean, which labels are valid); preferences come only from the user's words.
+#   grounding      restricting the LLM to given facts/labels, so a free guess becomes a
+#                  multiple-choice pick. songs.csv grounds it twice: labels go into the prompt
+#                  BEFORE extraction and the same labels check the reply AFTER.
+#   allowed-list   vocab[key]: the labels that really exist in songs.csv for a field
+#                  (build_vocab). A label is rejected only if the key HAS a list and the label
+#                  is not on it. Keys with no list (e.g. "language") accept any string.
+#   structured extraction  free text -> fixed keys (JSON), because later steps need fields.
+#   untrusted input  anything an LLM or user returns; validate type, range and label in code.
+#   resolve        turn a typed song name into a real catalog row (find_song). It only
+#                  identifies the song; seed_preferences then derives attribute values from it.
+#   seeds          preferences computed from named songs. Applied first so the user's explicit
+#                  words in the same message override them.
+#   dict.pop(key, default)  removes a key AND returns its value; the default (here []) avoids
+#                  a KeyError/None when the LLM did not return that key.
+#   content-based filtering  recommend by comparing the user's wanted features with each
+#                  song's features (not by what other users liked).
+
 import os
 import pathlib
 from datetime import datetime
@@ -558,6 +588,11 @@ class Interview:
         extracted = clean_preferences(extracted, self.vocab)
         self._trace(f"Extracted: {extracted}")
 
+        # extracted is a dict ({"favorite_mood": "calm", "liked_songs": ["Clair de Lune"], ...}).
+        # pop() removes "liked_songs"/"disliked_songs" from it and returns the list (or [] if
+        # absent), so song names are NOT merged into the profile as if they were preferences.
+        # _resolve_songs only finds which real songs were meant; seed_preferences (below)
+        # turns those rows into attribute values (most common mood, average energy, ...).
         liked, messages = self._resolve_songs(extracted.pop("liked_songs", []))
         disliked, avoid_messages = self._resolve_songs(extracted.pop("disliked_songs", []))
         for message in messages + avoid_messages:
@@ -579,6 +614,8 @@ class Interview:
             # A language filter replaces any single preferred language (from a named song or earlier).
             seeds.pop("language", None)
             self.profile.pop("language", None)
+        # ORDER MATTERS: dict.update() overwrites. Seeds go in first, explicit words second,
+        # so "like Clair de Lune but faster" keeps the song's mood yet uses the faster tempo.
         self.profile.update(seeds)
         self.profile.update(extracted)
         for song in liked:

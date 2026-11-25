@@ -1,9 +1,0 @@
-Initial profile: {}
-User: 'I want anime music'
-Reference for extraction: ['what_you_can_tell_me.md', 'attributes.md', 'attributes.md', 'word-to-number tables', 'song catalog']
-Gemini failed extracting preferences: Gemini call failed: 401 UNAUTHENTICATED. {'error': {'code': 401, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'UNAUTHENTICATED', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'ACCESS_TOKEN_TYPE_UNSUPPORTED', 'metadata': {'method': 'google.ai.generativelanguage.v1beta.GenerativeService.GenerateContent', 'service': 'generativelanguage.googleapis.com'}}]}}
-Unknown attributes: ['favorite_mood', 'preferred_occasions', 'target_energy', 'favorite_genre', 'vocals', 'target_valence', 'target_acousticness', 'language', 'preferred_decade', 'target_popularity', 'target_tempo', 'target_danceability', 'target_duration']; asking about 'favorite_mood'
-Retrieved for 'favorite_mood': ['glossary_and_faq.md', 'moods_genres_and_tags.md', 'attributes.md']
-Gemini failed writing the question: Gemini call failed: 401 UNAUTHENTICATED. {'error': {'code': 401, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'UNAUTHENTICATED', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'ACCESS_TOKEN_TYPE_UNSUPPORTED', 'metadata': {'method': 'google.ai.generativelanguage.v1beta.GenerativeService.GenerateContent', 'service': 'generativelanguage.googleapis.com'}}]}}
-Question: What mood are you looking for in your music?
-Input closed; ending.

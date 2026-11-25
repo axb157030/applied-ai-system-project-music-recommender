@@ -1,6 +1,0 @@
-Initial profile: {}
-User: 'Give me some video game music'
-Reference for extraction: ['examples_and_listening.md', 'moods_genres_and_tags.md', 'attributes.md', 'word-to-number tables', 'song catalog']
-Extracted: {'favorite_genre': 'soundtrack', 'preferred_tags': ['game'], 'preferred_occasions': ['gaming']}
-Profile now: {'favorite_genre': 'soundtrack', 'preferred_tags': ['game'], 'preferred_occasions': ['gaming']}
-Recommendations: Stardew Valley Overture (1.00); Megalovania (1.00); Cornfield Chase (0.58); UNDERTALE - CORE (RoBKTA Remix) [Electro | Monstercat] (0.42); Undertale - Once Upon A Time (Orchestral Cover) (0.25)

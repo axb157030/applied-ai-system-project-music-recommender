@@ -13,6 +13,8 @@ venv/
 # Environment variables
 *.env
 .env.*
+.env*
+*env
 
 # macOS artifacts
 .DS_Store
@@ -26,3 +28,4 @@ venv/
 
 # Logs
 *.log
+/logs/*interview*
